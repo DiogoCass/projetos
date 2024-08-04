@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <meta name="author" content="@dgcass">
+   <title>GaradorDeQrCode</title>
+   <style>
+       html, body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    background: whitesmoke;
+    align-items: center;
+    margin: 0;
+}
+.dgcss-container {
+    background: whitesmoke;
+    max-width: 280px;
+    min-width: 280px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px #13142036;
+}
+input, button {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+button {
+    background: linear-gradient(90deg, #8098ff, #9180ff, #95a2ff);
+    color: whitesmoke;
+} 
+img {
+    width: calc(100% - 40px);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+input{
+    width: calc(100% - 20px); padding: 10px;
+}
+input:focus {
+    outline: none;
+    outline: 2px solid #9180ff;
+}
+   </style>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/themes/default/default.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.min.js"></script>
+</head>
+<body>
+   <div class="dgcss-container">
+      <img src="https://via.placeholder.com/150" alt="dgcss-qr">
+      <input type="text" placeholder="Digite aqui seu link ou texto">
+      <button><b>GENERAR</b></button>
+   </div>
+   <script>
+      $(document).ready(function(){
+         var content = $("input").val();
+         $("button").click(function(){
+            content = $("input").val();
+            var qrCode = "https://api.qrserver.com/v1/create-qr-code/";
+            $("img").attr("src", qrCode + "?size=500x500p&data=" + content);
+            setTimeout(()=>{
+                showToast()
+            },600)
+         });
+      });
+      const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+      onOpen: (toast) => {
+      toast.addEventListener('mouseenter',Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+      })
+      function showToast(){
+        Toast.fire({
+          icon: 'success',
+          title: 'QR CODE gerado com sucesso!'
+      })
+      }
+   </script>
+</body>
+</html>
