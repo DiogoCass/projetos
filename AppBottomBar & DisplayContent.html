@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+<meta charset="UTF-8" />    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <style>
+            * {
+     box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+ html {
+     font-size: 62.5%;
+}
+ body {
+     font-family: Roboto;
+}
+
+header {
+    width: 100vw;
+position: absolute;
+top: 0;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 60px;
+     background-color: #4e3cc8;
+     padding: 10px 15px;
+     color: #fff;
+}
+ .container {
+     width: 100vw;
+position: absolute;
+bottom: 0;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+}
+ .phone-bottom {
+     width: 400px;
+     height: 60px;
+     background-color: #4e3cc8;
+     padding: 10px 15px;
+     box-shadow: 0px 4px 6px #4e3cc8;
+}
+ .phone-bottom .nav {
+     color: #fff;
+     display: flex;
+     align-items: center;
+     height: 100%;
+     position: relative;
+}
+ .phone-bottom .nav .slide {
+     width: calc(100% / 3);
+     height: 100%;
+     content: '';
+     position: absolute;
+     background-color: rgba(255, 255, 255, 0.15);
+     z-index: 2;
+     top: 0;
+     border-radius: 4px;
+     transform: translateX(0%);
+     transition: transform 350ms ease;
+}
+ .phone-bottom .nav-link {
+     color: #fff;
+     text-decoration: none;
+     flex: 1;
+     display: flex;
+     align-items: center;
+     height: 100%;
+     justify-content: center;
+     position: relative;
+}
+ .phone-bottom .nav-link.active .nav-text {
+     opacity: 1;
+}
+ .phone-bottom .nav-link.active i {
+     transform: translateX(0%);
+}
+ .phone-bottom .nav-text {
+     text-decoration: none;
+     padding-left: 10px;
+     display: block;
+     font-size: 1.6rem;
+     opacity: 0;
+     transition: opacity 350ms ease 100ms;
+}
+ .phone-bottom .nav i {
+     color: #fff;
+     transform: translateX(80%);
+     transition: transform 350ms ease;
+}
+ .material-icons {
+     font-family: 'Material Icons';
+     font-weight: normal;
+     font-style: normal;
+     font-size: 24px;
+    /* Preferred icon size */
+     display: inline-block;
+     line-height: 1;
+     text-transform: none;
+     letter-spacing: normal;
+     word-wrap: normal;
+     white-space: nowrap;
+     direction: ltr;
+    /* Support for all WebKit browsers. */
+     -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+     text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+     -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+     font-feature-settings: 'liga';
+}
+ 
+        </style>
+    </head>
+    <body>
+    <header><h3 id="appbar-name">titulo</h3></header>
+    <main id="root"></main>
+    
+        <div class="container">
+  <div class="phone-bottom">
+    <nav class="nav">
+      <div class="slide"></div>
+      <a href="#" class="nav-link active" data-index="0">
+        <i class="material-icons md-18">signal_cellular_alt</i>
+        <span class="nav-text">Stats</span>
+      </a>
+      <a href="#" class="nav-link" data-index="1">
+        <i class="material-icons md-18">home</i>
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="#" class="nav-link" data-index="2"><i class="material-icons md-18">search</i>
+        <span class="nav-text">Find</span></a>
+    </nav>
+  </div>
+</div>
+<script>
+    const navLinks = document.querySelectorAll('.nav-link');
+const slide = document.querySelector('.slide');
+
+
+navLinks.forEach((link) => link.addEventListener('click', handleClick));
+
+
+function handleClick () {
+  const index = parseInt(this.dataset.index);
+  slide.style.transform = `translateX(${index * 100}%)`;
+  navLinks.forEach(link => link.classList.remove('active'));
+  this.classList.add('active');
+}
+
+window.onload = function () {
+    const $ = id => document.getElementById(id)
+    const $$ = qs => document.querySelectorAll(qs)
+    const root = $("root")
+    const btns = $$(".nav-link")
+    const appbar = $("appbar-name")
+    const Stats = () => {
+        return `<section id="stats">
+        <br><br><br><br><br> content stats
+                </section>`
+    }
+    const Home = () => {
+        return `<section id="home">
+        <br><br><br><br><br> content home
+                </section>`
+    }
+    const Find = () => {
+        return `<section id="find">
+        <br><br><br><br><br> content find
+                </section>`
+    }
+    const paginas = {
+        "Stats": Stats,
+        "Home": Home,
+        "Find": Find
+    }
+    root.innerHTML = Stats()
+    appbar.innerHTML = Stats.name.toUpperCase()
+    Array.from(btns).forEach((btn, i) => {
+    btn.addEventListener('click', (e) => {
+        const titulo = e.currentTarget.children[1].innerText
+        root.innerHTML = paginas[titulo]()
+           appbar.innerHTML = titulo.toUpperCase() 
+        })
+    })
+}
+</script>
+    </body>
+</html>
