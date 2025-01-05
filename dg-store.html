@@ -5,11 +5,20 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta class="statusbar" name="theme-color" content="white">
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <meta name="author" content="Diogo Coutinho Cassemiro" />
-<title>Co-Diogo.cjs</title>
+<title>Diogo C.Cass | WebStore</title>
 <meta name="theme-color" content="#75b529">
+<meta property=og:image content="https://www.dropbox.com/scl/fi/0ai1zke8ge6f1fxrvbcjd/FB_IMG_1658102300081.jpg?rlkey=j937fgpqxxt4fhcuokhwk1ds7&st=144p054r&dl=1"/>
+<link rel="shortcut icon" href="https://www.dropbox.com/scl/fi/0ai1zke8ge6f1fxrvbcjd/FB_IMG_1658102300081.jpg?rlkey=j937fgpqxxt4fhcuokhwk1ds7&st=144p054r&dl=1" type="image/x-icon">
+<link rel="apple-touch-icon" href="https://www.dropbox.com/scl/fi/0ai1zke8ge6f1fxrvbcjd/FB_IMG_1658102300081.jpg?rlkey=j937fgpqxxt4fhcuokhwk1ds7&st=144p054r&dl=1">
 <link href="https://fonts.googleapis.com/css?family=Muli&display=swap" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/themes/default/default.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.min.js"></script>
+<link rel="stylesheet" src="https://raw.githubusercontent.com/daneden/animate.css/master/animate.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+
 <style>
 *{
 margin:0;
@@ -83,9 +92,10 @@ header button {
  margin-top:15px;
 }
 .dgcss-title {
- margin:30px 20px;
+ margin:6px 0px -14px 0px !important;
  text-align:center;
  color: orange; #ff2e70;
+ font-size: 1.2rem;
 }
 .dgcss-container {
   padding:20px;
@@ -212,12 +222,13 @@ header button {
  display:flex;
 }
 .dgcss-sec5 .dgcss-flex{
- height:100vh;
+ height:110vh;
  display:flex;
  justify-content: center;
  align-items: center;
  text-align: center;
  padding:20px;
+  
 }
 .dgcss-thanks h1 {
  color: orange; #ff2e70;
@@ -283,7 +294,7 @@ color: orange; #ff2e70;
     background-color: whitesmoke;
     position: fixed;
     z-index: 999;
-    transition: 0.5s;
+    transition: .3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -302,12 +313,73 @@ color: orange; #ff2e70;
     padding: 5px 7px 2px 5px;
     border-radius: 8px;
 }
+/*
+.dgcss-product-list {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
+.dgcss-product {
+    width: 160px;
+    margin: 2px;
+}
+.dgcss-views {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+*/
+
+.aa {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.aa.aaa {
+    
+    width: auto;
+    height: auto;
+    display: block;
+    
+}
+.bb {
+    width: 160px;
+    margin: 4px;
+}
+.bb.bbb {
+    
+    width: auto;
+    margin: 20px 0;
+    
+}
+.cc {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.cc.ccc {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+.dgcss-title.marge {
+ margin:10px 0px -30px 0px !important;
+}
 </style>
 </head>
+
+
 <body>
 <div id="loading">
-    CARREGANDO WEBSITE . . .
+    CARREGANDO MATERIAIS. . .
+  <center><small>
+    Aguarde, isso pode levar alguns segundos.
+  </small></center>
 </div>
 <!--
  nome do app : Meu E-Commerce 2.0,
@@ -316,7 +388,7 @@ color: orange; #ff2e70;
 -->
 <section class="dgcss-sec1">
 <nav>
- <a href="#" >DG-Store</a>
+ <a href="#" >🧑‍💻 DG-Store</a>
  <div class="dgcss-bar" >
   <span></span>
   <span></span>
@@ -325,13 +397,13 @@ color: orange; #ff2e70;
 </nav>
 <header>
  <div>
-  <h3>Obtenha Codigos Personalisados</h3>
-  <button class="dgcss-signin" >No Whatsapp</button>
+  <h3>🪐 Obtenha Codigos Personalisados</h3>
+  <button class="dgcss-signin" >🛍️ No Whatsapp 📨</button>
   </div>
 </header>
       <b><small id="waw">Novos projetos mais tarde 🙂</small></b>
-<h2 class="dgcss-title" >Meus Projetos</h2>
-<div class="dgcss-product-list dgcss-container" >
+<h2 class="dgcss-title" >——— Menu De Projetos ———</h2>
+<div class="aa dgcss-product-list dgcss-container" >
 </div>
 <div class="dgcss-copyright" >
   <small>&copy; Criado de ❤️ por Dg C.Cass</small>
@@ -342,8 +414,10 @@ color: orange; #ff2e70;
 <div class="dgcss-flex" >
  <div>
  <span class="dgcss-discount dgcss-dis"></span>
- <img class="dgcss-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGgU2u5ikvkiPf1hg3Ttv0e5ZGB9MliseIWw&usqp=CAU" alt="" >
- <div class="dgcss-container" >
+ <center>
+     <img class="dgcss-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGgU2u5ikvkiPf1hg3Ttv0e5ZGB9MliseIWw&usqp=CAU" alt="" >
+ </center>
+  <div class="dgcss-container" >
    <h2 class="dgcss-pro-name" >Titulo</h2>
    <h1 class="dgcss-price" >Valor</h1>
    <p class="dgcss-description" >Descrição</p>
@@ -360,14 +434,14 @@ color: orange; #ff2e70;
   <div class="dgcss-thanks" >
   <center>
       <div class="qr-border">
-        <img src="https://i.ibb.co/Jt0QHHr/Screenshot-20250103-165722-2.png">
+        <img src="https://www.dropbox.com/scl/fi/wcghgsstx7j41rel4cj9c/Screenshot_20250105-171116-2.png?rlkey=qyx15l77vgfeak1y1dc6nma8r&st=2d7vyrke&dl=1">
     </div>
   </center><br>
-      <p style="font-size:6px">00020126580014BR.GOV.BCB.PIX0136a8a09d94-2bcd-4730-82d1-497669a7de95520400005303986540510.005802BR5924Diogo Coutinho Cassemiro6009SAO PAULO62140510A2cFhEnEWC6304C360</p>
-  
+      <p style="font-size: 6px">00020126970014BR.GOV.BCB.PIX0136a8a09d94-2bcd-4730-82d1-497669a7de950235Aquisição de um produto da loja DGS5204000053039865406100.005802BR5924Diogo Coutinho Cassemiro6009SAO PAULO62140510y1tG29d5Bm63043E75</p>
     <h1>Boa Escolha :)</h1> 
     <p>Após o pagamento desse QRCODE, envie-nos o comprovante no whatsapp para concluirmos a sua entrega.</p><br>
     <button class="dgcss-home" >Abrir no Whats!!</button>
+    <center><small class="retorna">--- 🪐 voltar 🪐 ---</small></center>
   </div>
  </div>
 </section>
@@ -386,26 +460,72 @@ color: orange; #ff2e70;
   </div>
 </section>
 <!-- script -->
+<!-- Diogo Coutinho Cassemiro -->
 <script>
 const products = [
  {
-  id:1,
-  name:"Portfolio Elegante",
-  price: 10,
+  id:2,
+  name:"Card De Apresentar Produto",
+  price: 100,
+  discount:5,
+  video:"https://www.dropbox.com/scl/fi/fd0db6cgd0slb1lferz8e/lv_7277767074615774465_20250105131012.mp4?rlkey=1zxiisp4cc5hgycg6nx2q20s3&st=8f5pu7vh&dl=1",
+  image:"https://www.dropbox.com/scl/fi/hqnp66s666ihyspobzrmy/IMG-20241206-WA0008.jpg?rlkey=xkjrioofip72a6js3io0lti37&st=6xiq1hc8&dl=1",
+  description: "Este card é excelente para colocar na biografia do seu Instagram, para você que vende um produto único, que precisa de destaque, ele oferece uma animação interativa e um design bem criativo"
+ },
+ {
+  id:3,
+  name:"Layout Dark Design",
+  price: 100,
+  discount:9,
+  video:"https://www.dropbox.com/scl/fi/y3js6k9nr46a8rh98fp5d/lv_7277767074615774465_20250105134357.mp4?rlkey=r4seaf2ajaybfujru92v8ruqw&st=bxkbcr9s&dl=1",
+  image:"https://www.dropbox.com/scl/fi/u1y6epkwrimfcn38ogok7/Screenshot_20250104-172904-2.png?rlkey=pbu3c37f5t4yis9vytylo8rwg&st=y6pf980u&dl=1",
+  description:"Este Design, foi inspirado no visual da Xiomi, com detalhes obtidos diretamente da marca para inventar uma projeção explendit. O seu código fonte está uma obra impecável, como uma verdadeira obra de arte para quem entende de programação. No BackEnd, temos uma API consumindo dados diretamente do SITE DA NASA :), obtendo fotos, títulos e textos..."
+ },
+ {
+  id:4,
+  name:"Biografia Jornalística",
+  price: 100,
   discount:30,
-  image:"https://www.dropbox.com/scl/fi/z0eikm34ioi36kuk47xii/CV-1.png?rlkey=zmggdnpmxe73wo7obnplcr4tc&st=7k26l4iy&dl=1",
-  description:"Este portifolio é um website que te representara, com informações em textos e uma foto de perfil, além de um formulario para contato direcionando mensagens ao seu whatsapp. Ao obter, eu colocarei ele online para você, com as informções que você quiser."
+  video:"https://www.dropbox.com/scl/fi/0bcd7nb63y2vh2ildh3in/lv_7277767074615774465_20250105124850.mp4?rlkey=44vz9cpxum0hp42ojgkpst1pv&st=g9dhuic9&dl=1",
+  image:"https://www.dropbox.com/scl/fi/c8wtfneuiat2r7lck1nkq/Screenshot_20250104-193048-2.png?rlkey=3db75m7od6ci1cgclktk40kfk&st=r0l69jeg&dl=1",
+  description:"Essa biografia, é uma página excelente para quem deseja ter um blog, projetada para apresentar vídeos, fotos, áudios, músicas e qualquer outra mídia. Além disso, ela é rica em detalhes com inspiração na 'leitura de um ARTIGO formal' como um jornal e sua elegância."
+ },
+ {
+  id:5,
+  name:"Portfólio Simples",
+  price: 100,
+  discount:20,
+  video:"https://www.dropbox.com/scl/fi/9xcvngz6jpxf7e0n7oju9/lv_7277767074615774465_20250105145025.mp4?rlkey=40emxv1zmgsi7omukl32byic9&st=3treos3d&dl=1",
+  image:"https://www.dropbox.com/scl/fi/49cwufcni62wpnxjpb21o/Screenshot_20250104-194015-2.png?rlkey=2x69g1phiycymlankv4tc2vnk&st=pdwf2af5&dl=1",
+  description:"Um portfólio formal, minimalista e com elegancia no seu design, contendo uma foto de perfil, barras circulares para demonstrar suas skills, e uma direção ao seu whatsapp ou seu email e redes sociais."
+ },
+ {
+  id:6,
+  name:"Portfólio Completo",
+  price: 100,
+  discount:40,
+  video:"https://www.dropbox.com/scl/fi/nxrgxieh7vjpcv2e2qkyw/lv_7277767074615774465_20250105151138.mp4?rlkey=z4z9kxm3pos20fp4uum9jcuz9&st=ic1x8tmr&dl=1",
+  image:"https://www.dropbox.com/scl/fi/ry029o8o2qct9xtq3xx43/Screenshot_20250104-180025-3.png?rlkey=87dankom30bk721r18uelavl3&st=e11tekhg&dl=1",
+  description:"Este portfólio tem uma linda apresentação visual, inspirado na cor do céu noturno, ele contém elementos bem organizados, com suporte para mídias e direções ao seus projetos. Uma excelente escolha para se tornar o seu currículo online." 
+ },
+ {
+  id:7,
+  name:"Ecomerce Completo",
+  price: 100,
+  discount:50,
+  video:"https://www.dropbox.com/scl/fi/ex1brjjxjc9tchbsnpajf/lv_7277767074615774465_20250105110629.mp4?rlkey=oyqi9lszxr01ssvo70nkn7hzz&st=1cxum5bz&dl=1",
+  image:"https://www.dropbox.com/scl/fi/4gko8x0ds99a4y35abamj/Screenshot_20250104-183642-2.png?rlkey=2dfc75i19j98607lty16p0lcy&st=in92ju3f&dl=1",
+  description: "Este Ecommerce foi criado em Bootstrap, excelente para apresentar uma grande quantidade de produtos, com classificações e categorias, com pesquisas e vários outros recursos integrado. Com direções em suas redes sociais, transições em sua conta bancária e formulário para captação de dados direcionadas ao seu email ou WhatsApp."
  }
 ]
 const coders = [
  {
   name:"Sou Diogo Coutinho Cassemiro",
-  avtar:"https://images.pexels.com/photos/3876407/pexels-photo-3876407.jpeg?auto=compress&cs=tinysrgb&h=1280&w=1921",
+  avtar:"https://www.dropbox.com/scl/fi/0ai1zke8ge6f1fxrvbcjd/FB_IMG_1658102300081.jpg?rlkey=j937fgpqxxt4fhcuokhwk1ds7&st=144p054r&dl=1",
   url:"https://www.instagram.com/diogocoutcass?igsh=MWQzOTVzZjJjd20yaQ==", 
- }
+ },
 ]
 let product = {};
-let name, number, email;
 
 $(window).on('load',function(){
  setData();
@@ -427,6 +547,12 @@ $(document).ready(function(){
   product = products.find(p => p.id == id);
   $(".dgcss-sec1").hide();
   $(".dgcss-sec5").fadeIn();
+ });
+ $(".retorna").click(function(e){
+  const id = e.target.getAttribute("data-id");
+  product = products.find(p => p.id == id);
+  $(".dgcss-sec1").fadeIn();
+  $(".dgcss-sec5").hide();
  });
  $(".dgcss-signin").click(function(){
   setTimeout(()=>{
@@ -454,55 +580,41 @@ $(document).ready(function(){
   $(".dgcss-sec1").hide();
   $(".dgcss-sec6").fadeIn();
  });
- $("#form").submit(function(e){
-   e.preventDefault();
-   name = $("#name").val();
-   number = $("#number").val();
-   address = $("#address").val();
-   $(".dgcss-sec5").hide();
-   if(!product.name) {
-   $(".dgcss-sec1").fadeIn();
-    return; 
-   }
-   $(".dgcss-sec4").fadeIn();
-   $(".dgcss-u-name").text(name);
-   $(".dgcss-u-number").text(number);
-   $(".dgcss-u-address").text(address);
-   
-   $(".dgcss-d-img").attr("src", product.image);
-   $(".dgcss-d-name").text(product.name);
-   $(".dgcss-d-price").text("Rs."+product.price);
-   
- });
  
- $(".dgcss-checkout").click(function(){
-  $(".dgcss-sec4").hide();
-  $(".dgcss-sec3").fadeIn();
-  $(".dgcss-user-name").text(name);
- });
  $(".dgcss-home").click(function(){
    setTimeout(()=>{
        $(".dgcss-sec5").hide();
        $(".dgcss-sec1").fadeIn();
        product = {};
        setTimeout(()=>{
-           const zp = "https://api.whatsapp.com/send?phone=5551996748252&text=Olá%20Diogo,%20eu%20vim%20atraves%20do%20seu%20portfolio...";
+           const zp = "https://api.whatsapp.com/send?phone=5551996748252&text=Olá%20Diogo,%20eu%20vim%20atraves%20da%20sua%20loja...";
             window.open(zp, '_blank');
        },500)
    },200)
  });
 })
 
+let one = 0;
+function count() {
+    one++;
+    if (one == 7) {
+        loading.style = "opacity: 0";
+        loading.style = "display: none";
+    }
+}
+
 function addProduct(data) {
  const div = `
-  <div class="dgcss-product">
-  <img src="${data.image}" alt="" >
+  <div class="bb dgcss-product">
+  <video oncanplaythrough="count()" preload="none" poster="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGgU2u5ikvkiPf1hg3Ttv0e5ZGB9MliseIWw&usqp=CAU" style="width:100%" no-controls autoplay loop muted playsinline>
+      <source src="${data.video}" type="video/mp4">
+  </video>
   <div class="dgcss-product-details" >
   <p>${data.name}</p>
   <h4>Rs. ${data.price} <del>${Math.floor(data.price * 100 / (100 - data.discount))}</del></h4>
   <span class="dgcss-discount">${data.discount}% off</span>
   </div>
-   <div class="dgcss-views" >
+   <div class="cc dgcss-views" >
     <button class="dgcss-view" data-id="${data.id}">Detalhes</button>
     <button class="dgcss-buy-now" data-id="${data.id}">Comprar</button>
    </div>
@@ -524,19 +636,57 @@ function addCoder(coder) {
     <h1>${coder.name}</h1>
     <a href="${coder.url}" target="_blank" >Veja mais</a>
   </div>
- `;
+  <div style="padding: 10px"class="dgcss-cart">
+      <p style="margin: 12px 0 0 0">~~~~ 🪐 Meus Certificados 🪐 ~~~~</p><br>
+      <img src="https://www.dropbox.com/scl/fi/ltvb9hmn3t3em5tc70t9j/IMG-20240917-WA0022-1.jpg?rlkey=cylx324o4axqib0th7cfuyxvv&st=372avqwm&dl=1">
+      <img src="https://www.dropbox.com/scl/fi/myleedpmfb3wtnb5ys63v/IMG-20240917-WA0020-1.jpg?rlkey=t3c9zxyvfe5tv1veb9vgaq10b&st=frbtr50c&dl=1">
+      <img src="https://www.dropbox.com/scl/fi/j0m0uos72eso7u658upd2/IMG-20240913-WA0008-1.jpg?rlkey=e701kcy1xyil7vd0x5ds7v6et&st=gdw589lw&dl=1">
+  </div>
+  <div class="dgcss-cart">
+      <div class="dgcss-sec-title" >
+          <h1>Configurações</h1>
+     <small>~~~~ 🪐 ~~~~</small>
+  </div>
+  <a onclick="ajs()">Ajustar vitrini</a>
+  </div>
+   `;
+ 
  $(".dgcss-cart-list").append(div);
 }
+
 function setData(){
- coders.forEach(coder => addCoder(coder))
+    coders.forEach(coder => addCoder(coder))
 }
 
-setTimeout(()=>{
-    loading.style = "opacity: 0";
-    setTimeout(()=>{
-        loading.style.display = "none";
-    },100)
-},2000)
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  onOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+})
+
+function ajs() {
+  $(".aa").toggleClass("aaa");
+  $(".bb").toggleClass("bbb");
+  $(".cc").toggleClass("ccc");
+  $(".dgcss-title").toggleClass("marge");
+  
+  setTimeout(()=>{
+   $(".dgcss-sec6").hide();
+   $(".dgcss-sec1").fadeIn();
+   document.documentElement.scrollTop = 0;
+   //voce alternou o modo de visualização.
+   Toast.fire({
+  icon: 'success',
+  title: 'Modo de visualização alternado'
+})
+  }, 300)
+}
 </script>
 </body>
 </html>
