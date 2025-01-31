@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <title>TrocadorDeFundo</title>
+        <meta name="author" content="@dgcass">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap");
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Poppins;
+    background: #FF55A3;
+    transition: 0.3s;
+}
+.dgcss-menu {
+    width: 100%;
+    background: rgba(240, 240, 255, 0.4);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    color: white;
+    z-index: 99999;
+    display: flex;
+    gap: 50px;
+    text-align: center;
+    justify-content: space-around;
+}
+.dgcss-menu div button {
+    padding: 6px;
+    background: transparent;
+    border: 1px solid white;
+    margin: 17px 0px 0px 35px;
+    color: white;
+    font-family: Poppins;
+}
+button:hover {
+    transform: scale(1.05);
+}
+button {
+    transition: 0.3s;
+    border-radius:3px;
+}
+.dgcss-bolhas {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+}
+.dgcss-bolhas > * {
+    width: 200px; height: 100px;
+    position: absolute;
+    animation: scala 5s ease-in-out infinite;
+}
+@keyframes scala {
+    50%{ transform: scale(2); }
+}
+#dgcss-cor-azul {
+    background: blue;
+    top: 90%;
+    height: 10vh;
+    transition: 0.3s;
+    animation-delay: 1s;
+}
+#dgcss-cor-verde {
+    background: #52fe99;
+    width: 50%;
+    height: 20%;
+    top: 40%;
+    left: 50%;
+    animation-delay: 2s;
+    transition: 0.3s;
+}
+#dgcss-cor-amarelo {
+    background: orange;
+    transition: 0.3s;
+    animation-delay: 3s;
+}
+.dgcss-conteudo {
+    left: 0px;
+    position: fixed;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(50px);
+    color: white;
+}
+
+/*###############*/
+
+img{
+
+    pointer-events: none;
+
+    user-select: none;
+
+}
+
+
+.main{
+
+    margin-top: 40px;
+
+    position: relative;
+
+    width: 130%;
+
+    height: 50vh;
+
+    object-fit: cover;
+
+    opacity: 1;
+
+    max-width: 700px;
+    transform: translate(-12%, -10%);
+    animation: ks .5s ease;
+
+}
+
+@keyframes ks {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+#glass{
+
+    background-color: white;
+
+    opacity: 0.8;
+
+    background-color: lightgrey;
+
+    border-radius: 5px;
+
+}
+
+.audio{
+
+    border-radius: 45px;
+
+    outline: none;
+
+    width: 100%;
+
+    max-width: 700px;
+
+}
+
+
+
+audio::-webkit-media-controls-play-button, audio::-webkit-media-controls-panel {
+
+    background-color: lightgrey;
+
+}
+
+.nav {
+    width: 100vw;
+    height: 10vh;
+    background-color: white;
+    position: absolute;
+    bottom: 0px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.nav button {
+    padding: 10px 50px 10px 50px;
+}
+
+
+/*#######*/
+
+.menuu { /*
+    padding: 0px 40px;
+    position: fixed;
+    left: 0; bottom: 0;
+    width: calc(100% - 80px);
+    height: 65px;
+    background: white;
+    opacity: .2;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;*/
+    
+    width: 100%;
+    background: rgba(240, 240, 255, 0.4);
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    color: white;
+    z-index: 99999;
+    display: flex;
+    gap: 50px;
+    text-align: center;
+    justify-content: space-around;
+} 
+.links {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 65px;
+    font-family:Poppins;
+    right: 0;
+    background: rgba(240, 240, 255, 1);
+    display: grid;
+    place-items: center;
+    clip-path: circle(0% at top left);
+    transition: clip-path .8s;
+    transition: .8s;
+}
+.links:target {
+    clip-path: circle(150% at top left);
+    background: rgba(240, 240, 255, 0);
+}
+.nav-btn {
+    margin: 20px;
+    display: grid;
+    place-items: center;
+    color: white;
+    text-decoration: none;
+}
+
+#head {
+    width:44vw;
+    white-space:nowrap ;
+    overflow:hidden ;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+        </style>
+    </head>
+    <body id="body">
+    <div class="dgcss-menu">
+        <div><h3 id="head">Tutoriais De HTML</h3></div>
+        <div>
+        <button onclick="dg_trocar()" id="tema">
+                Claro
+        </button>
+        </div>
+    </div>
+    
+    <div class="dgcss-bolhas">
+        <div id="dgcss-cor-azul"></div>
+        <div id="dgcss-cor-verde"></div>
+        <div id="dgcss-cor-amarelo"></div>
+    </div>
+    <div class="dgcss-conteudo" id="content">
+    oi
+    </div>
+    
+        <nav class="menuu">
+        <a class="nav-btn" href="#menuu">VOLTAR</a>
+        <a class="nav-btn" href="#menuu">AVANÇAR</a>
+        </nav>
+        <nav class="menuu">
+        <a class="nav-btn" href="#" id="Previous">VOLTAR</a>
+        <a class="nav-btn" href="#" id="Next">AVANÇAR</a>
+        </nav>
+        
+    <script>
+let prv, nxt, head, content, count, current=1;
+let book = {
+  1:{h:"🎶 Player Music — I Dont", c:"<center><div class='main'><div id='glass'><img style='margin-top: 20px;' src='https://www.dropbox.com/scl/fi/rkk57dd8itql5ej5rubk3/images-1-8.jpeg?rlkey=q49zvthimkokfe11wq0wmykba&st=bdvk21nb&dl=1' width='95%' height='100%'><audio class='audio' src='https://www.dropbox.com/scl/fi/chjl22oycydxxye2t8quq/ReelAudio-55784.mp3?rlkey=1u91x6m7juacp5dom707za5ta&st=c29yc84x&dl=1' controls></audio></div></div></center>"},
+  2:{h:"🎶 Player Music — Losth", c:"<center><div class='main'><div id='glass'><img style='margin-top: 20px;' src='https://www.dropbox.com/scl/fi/aimbnwcpchhytir7pemlc/images-1-9.jpeg?rlkey=vcbkofpecg20tzgflvtv7zzpw&st=gpq752sb&dl=1' width='95%' height='100%'><audio class='audio' src='https://www.dropbox.com/scl/fi/0xwxgkrlchywapv8b8qum/ReelAudio-22477.mp3?rlkey=mb4f6rxtt43hd6gz12dtledw5&st=czy8iiun&dl=1' controls></audio></div></div></center>"},
+  3:{h:"🎶 Player Music — Avangard", c:"<center><div class='main'><div id='glass'><img style='margin-top: 20px;' src='https://www.dropbox.com/scl/fi/g0rn7yxv0yik5e3pidut4/download-5.jpeg?rlkey=qwpl0kjo6o6s67cl2nx6va1x9&st=1r27eojd&dl=1' width='95%' height='100%'><audio class='audio' src='https://www.dropbox.com/scl/fi/xe2ghpu0z3ce2obu29fe8/ReelAudio-34209.mp3?rlkey=ddojg4bheeybcnaag59i1ypcq&st=fznd6b3b&dl=1' controls></audio></div></div></center>"},
+  4:{h:"🎶 Player Music — FromTStar", c:"<center><div class='main'><div id='glass'><img style='margin-top: 20px;' src='https://www.dropbox.com/scl/fi/pucya3hap64jg9yuc0oma/images-1-5.jpeg?rlkey=9shwswmg7e0fb146t4uu2tw2t&st=yrn9fyub&dl=1' width='95%' height='100%'><audio class='audio' src='https://www.dropbox.com/scl/fi/5gu7uity3iktypsub68mg/ReelAudio-49756.mp3?rlkey=xc1fwep11qqb7yg8d95ekvorf&st=pkx0s277&dl=1' controls></audio></div></div></center>"}
+};
+count = Object.keys(book).length;
+window.onload = init;
+function init(){
+  prv = document.querySelector("#Previous");
+  nxt = document.querySelector("#Next");
+  head= document.querySelector("#head");
+  cont = document.querySelector("#content");
+  prv.addEventListener("click", prevPage);
+  nxt.addEventListener("click", nextPage);
+  setCurrent(current);
+}
+function setCurrent(current){
+  head.textContent = book[current].h;
+  cont.innerHTML = book[current].c;
+  prv.disabled = current<=1?true:false; 
+  nxt.disabled = current>=count?true:false;
+}
+function prevPage(){
+  current = current<=1?1:--current;
+  setCurrent(current);
+}
+function nextPage(){
+  current = current>=count?count:++current; 
+  setCurrent(current);
+}
+
+const $ = id => document.getElementById(id);
+var check = false;
+function dg_trocar(){
+    var body = $("body");
+    var amarelo = $("dgcss-cor-amarelo");
+    var azul = $("dgcss-cor-azul");
+    var verde = $("dgcss-cor-verde");
+    var tema = $("tema");
+    if(check) {
+        body.style.background ="rgb(50 50 90)";
+        amarelo.style.background ="#d19f15";
+        azul.style.background ="#6c0296";
+        verde.style.background ="#2269ab";
+        tema.style.background ="white";
+        tema.style.color ="rgb(40 40 100)";
+        tema.innerHTML ="Escuro";
+        check = !check;
+    } else {
+        body.style.background ="#FF55A3";
+        amarelo.style.background ="orange";
+        azul.style.background ="blue";
+        verde.style.background ="#52fe99";
+        tema.style.background ="transparent";
+        tema.innerHTML ="Claro";
+        tema.style.color ="white";
+        check = !check;
+    }
+}
+
+const start = () => {
+    Swal.fire({
+        title:'Solta O Som Dg',
+        text:'Player Music criado por Diogo Coutinho Cassemiro'
+    }).then(() => init()); 
+};
+
+onload = start;
+
+
+    </script>
+    </body>
+  </html>
