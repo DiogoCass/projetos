@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+        <!-- O CSS permanece exatamente o mesmo -->
+        <style>
+            /* Todo o CSS existente permanece igual */
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap');
+            @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+            * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    transition: all 150ms ease-out;
+    outline: none;
+}
+
+html, input, button {
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    --BG: hsl(220,20%,95%);
+    --FG: hsl(220,20%,40%);
+    --FG2: hsl(220,20%,95%);
+    --BG2: hsl(220,20%,05%);
+    --SEP: hsl(220,18%,80%);
+    --N500: hsl(220,10%,50%);
+    --G500: hsl(160,50%,50%);
+    --N300: hsl(220,10%,80%);
+    background-color: var(--BG);
+}
+
+body.dark {
+    --FG: hsl(220,20%,95%);
+    --BG: hsl(220,20%,05%);
+    --BG2: hsl(220,20%,95%);
+    --FG2: hsl(220,20%,40%);
+    --SEP: hsl(220,18%,10%);
+    --N300: hsl(220,10%,70%);
+    --N500: hsl(220,10%,50%);
+    --N300: hsl(220,10%,20%);
+    --G500: hsl(160,50%,50%);
+}
+
+.wrapper {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background-color: var(--BG);
+    color: var(--FG);
+    display: flex;
+    flex-direction: column;
+    max-width: 32rem;
+    border: 2px solid var(--SEP);
+    margin: 0 auto;
+}
+
+.header-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 4rem;
+    border-bottom: 2px solid var(--SEP);
+}
+
+.header {
+    padding: 0.5rem;
+    padding-left: 1rem;
+    text-align: center;
+    font-weight: bolder;
+    display: flex;
+    align-items: center;
+    color: var(--FG);
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--BG);
+    width: 100%;
+    height: 4rem;
+    transform: translateY(0%);
+    transition: transform background 150ms ease-out;
+}
+
+body.dark .light { display: none; }
+body:not(.dark) .dark { display: none; }
+.theme { color: var(--N500); }
+.header span { flex: 1; text-align: left; }
+button:hover { background-color: var(--N300); }
+
+#notes {
+    flex: 1;
+    padding: 1rem;
+    overflow: auto;
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 10rem;
+    position: relative;
+}
+
+#notes:empty::before {
+    position: absolute;
+    width: 100%;
+    top: 1rem;
+    content: "Sem Items";
+    color: var(--N500);
+    display: block;
+    text-align: center;
+}
+
+.note {
+    border: 2px solid var(--SEP);
+    padding: 1rem;
+    border-radius: 4px;
+    background-color: var(--BG);
+    transition: all 150ms ease-out;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    font-size: 0.8rem;
+}
+
+.note::after {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    content: "";
+    height: 1px;
+    transition: all 150ms ease-out;
+    background-color: var(--BG);
+    box-shadow: 0 0 3rem 3rem var(--BG);
+}
+
+.note::before {
+    content: attr(data-title);
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.note[data-edit="true"]::before {
+    display: none;
+}
+
+.note[data-edit="true"]:empty::before {
+    content: "Escreva sua nota...";
+    color: var(--N500);
+    display: block;
+    font-weight: 400;
+}
+
+.note[data-edit="true"] {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    outline: none;
+    overflow: auto;
+    font-size: 1rem;
+    z-index: 1;
+}
+
+button {
+    width: 3rem;
+    height: 3rem;
+    border: none;
+    background-color: transparent;
+    color: var(--N500);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.toast {
+    position: absolute;
+    bottom: 0rem;
+    left: 0%;
+    width: 100%;
+    background-color: var(--BG2);
+    color: var(--FG2);
+    padding: 1rem 0.75rem;
+    animation: pop 2s ease-out forwards;
+    z-index: 99;
+    text-align: center;
+}
+
+@keyframes pop {
+    0%, 100% { transform: translateY(100%); }
+    10%, 90% { transform: translateY(0); }
+}
+
+.edit-header {
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    z-index: 0;
+    transform: translateY(-100%);
+    transition: transform 150ms ease-out;
+    background-color: var(--BG);
+    position: absolute;
+    width: 100%;
+    height: 4rem;
+}
+
+#title {
+    flex: 1;
+    padding: 0.5rem;
+}
+
+[data-state="edit"] .header {
+    z-index: 0;
+    transform: translateY(100%);
+}
+
+[data-state="edit"] .edit-header {
+    z-index: 1;
+    transform: translateY(0%);
+}
+
+        </style>
+    </head>
+    <body>
+        <!-- O HTML permanece exatamente o mesmo -->
+        <div class="wrapper" data-state="">
+            <div class="header-container">
+                <div class="header">
+                    <span>NOTAS MINIMALISTAS</span>
+                    <button onclick="addNote()">
+                        <i class="material-icons">add</i>
+                    </button>
+                    <button class="theme" onclick="toggleTheme()">
+                        <i class="material-icons light">sunny</i>
+                        <i class="material-icons dark">dark_mode</i>
+                    </button>
+                </div>
+                <div class="header edit-header">
+                    <span id="title" contenteditable>Title</span>
+                    <button onclick="deleteNote()">
+                        <i class="material-icons">delete</i>
+                    </button>
+                    <button onclick="saveNote()">
+                        <i class="material-icons">save</i>
+                    </button>
+                </div>
+            </div>
+            <div id="notes"></div>
+            <div class="toast">Seja Bem Vindo ao Notas Minimalistas</div>
+        </div>
+
+        <script>
+            // CRUD Storage Manager
+            const StorageManager = {
+                STORAGE_KEY: 'minimal_notes',
+                THEME_KEY: 'minimal_notes_theme',
+                
+                // Create
+                createNote(note) {
+                    const notes = this.getAllNotes();
+                    notes.push(note);
+                    this.saveNotes(notes);
+                    return note;
+                },
+                
+                // Read
+                getAllNotes() {
+                    const notes = localStorage.getItem(this.STORAGE_KEY);
+                    return notes ? JSON.parse(notes) : [];
+                },
+                
+                getNoteById(id) {
+                    return this.getAllNotes().find(note => note.id === id);
+                },
+                
+                // Update
+                updateNote(id, updatedNote) {
+                    let notes = this.getAllNotes();
+                    const index = notes.findIndex(note => note.id === id);
+                    if (index !== -1) {
+                        notes[index] = { ...notes[index], ...updatedNote };
+                        this.saveNotes(notes);
+                        return true;
+                    }
+                    return false;
+                },
+                
+                // Delete
+                deleteNote(id) {
+                    let notes = this.getAllNotes();
+                    notes = notes.filter(note => note.id !== id);
+                    this.saveNotes(notes);
+                },
+                
+                // Utilities
+                saveNotes(notes) {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(notes));
+                },
+                
+                // Theme Management
+                saveTheme(isDark) {
+                    localStorage.setItem(this.THEME_KEY, isDark);
+                },
+                
+                getTheme() {
+                    return localStorage.getItem(this.THEME_KEY) === 'true';
+                }
+            };
+
+            // Shorthands permanecem os mesmos
+            const doc = document;
+            const qs = q => doc.querySelector(q);
+            const qsa = q => [...doc.querySelectorAll(q)];
+            const ce = (q,c) => {
+                let e = doc.createElement(q);
+                c && e.classList.add(c);
+                return e;
+            }
+
+            // Função para renderizar todas as notas
+            function renderNotes() {
+                const notesContainer = qs("#notes");
+                notesContainer.innerHTML = '';
+                
+                const notes = StorageManager.getAllNotes();
+                notes.forEach(noteData => {
+                    let noteElement = ce("div");
+                    noteElement.classList.add("note");
+                    noteElement.dataset.title = noteData.title;
+                    noteElement.dataset.id = noteData.id;
+                    noteElement.textContent = noteData.content;
+                    noteElement.addEventListener("click", editNote);
+                    notesContainer.append(noteElement);
+                });
+            }
+
+            // Modificação da função addNote
+            function addNote() {
+                const id = Date.now().toString();
+                const newNote = {
+                    id: id,
+                    title: "Nova Nota #" + idgen.next().value,
+                    content: "",
+                    createdAt: new Date().toISOString()
+                };
+                
+                StorageManager.createNote(newNote);
+                
+                let noteElement = ce("div");
+                noteElement.classList.add("note");
+                noteElement.dataset.title = newNote.title;
+                noteElement.dataset.id = newNote.id;
+                noteElement.addEventListener("click", editNote);
+                
+                qs("#notes").append(noteElement);
+                editNote({target: noteElement});
+                toast("Nova nota criada com sucesso");
+            }
+
+            // Modificação da função deleteNote
+            function deleteNote() {
+                const noteElement = qs(`[data-edit="true"]`);
+                const noteId = noteElement.dataset.id;
+                
+                StorageManager.deleteNote(noteId);
+                noteElement.remove();
+                editMode(false);
+                toast("Nota deletada com sucesso");
+            }
+
+            // Modificação da função saveNote
+            function saveNote() {
+                let noteElement = qs(`[data-edit="true"]`);
+                const noteId = noteElement.dataset.id;
+                const newTitle = getTitle();
+                const newContent = noteElement.textContent;
+                
+                StorageManager.updateNote(noteId, {
+                    title: newTitle,
+                    content: newContent,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                noteElement.dataset.edit = "false";
+                noteElement.setAttribute("contenteditable", false);
+                noteElement.dataset.title = newTitle;
+                editMode(false);
+                toast("Nota salva com sucesso");
+                noteElement.addEventListener("click", editNote);
+            }
+
+            // Modificação da função toggleTheme
+            function toggleTheme() {
+                const body = qs("body");
+                body.classList.toggle("dark");
+                StorageManager.saveTheme(body.classList.contains('dark'));
+                toast("Tema alterado");
+            }
+
+            // As outras funções permanecem iguais
+            function addEventHooks(o) {
+                o.on = (...p) => o.addEventListener(...p);
+                o.off = (...p) => o.removeEventListener(...p);
+            }
+
+            const idgen = (function* () {
+                let count = StorageManager.getAllNotes().length;
+                while(true) yield ++count;
+            })();
+
+            function editMode(s) {
+                qs(".wrapper").dataset.state = s ? "edit" : "";
+            }
+
+            function getTitle() {
+                return qs("#title").innerText;
+            }
+
+            function setTitle(title) {
+                qs("#title").innerText = title;
+            }
+
+            function editNote({ target: note }) {
+                note.dataset.edit = "true";
+                let t = note.dataset.title;
+                setTitle(t);
+                note.setAttribute("contenteditable", true);
+                editMode(true);
+                note.removeEventListener("click", editNote);
+            }
+
+            function toast(msg) {
+                const toast = qs(".toast");
+                toast.innerText = msg;
+                toast.replaceWith(toast.cloneNode(true));
+            }
+
+            // Inicialização
+            window.onload = () => {
+                // Carregar tema
+                if (StorageManager.getTheme()) {
+                    qs("body").classList.add("dark");
+                }
+                
+                // Carregar notas salvas
+                renderNotes();
+                
+                // Adicionar event listeners
+                qsa(".note").forEach(t => t.addEventListener("click", editNote));
+            }
+        </script>
+    </body>
+</html>
