@@ -1,0 +1,17 @@
+{
+  "name": "Mino Cards",
+  "short_name": "Mino Cards",
+  "description": "Bloco De Notas Minimalistas",
+  "scope": "/projetos/",
+  "start_url": "/projetos/",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "display": "fullscreen", 
+  "icons": [
+      {
+        "src": "/projetos/icon.png",
+        "type": "image/png",
+        "sizes": "700x700"
+      }
+  ]
+}
