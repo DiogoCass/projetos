@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minimal Notes</title>
+    <link  rel = "canonical"  href = "https://diogocass.github.io/projetos/"/> 
+  <link  rel = "manifest"  href = "/projetos/manifest.webmanifest">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
@@ -456,6 +458,13 @@ button {
                 // Adicionar event listeners
                 qsa(".note").forEach(t => t.addEventListener("click", editNote));
             }
-        </script>
+
+      if (navigator.serviceWorker) {
+        navegador.serviceWorker.register (
+          '/projetos/sw.js',
+          {escopo: '/projetos/'}
+        )
+      }
+         </script >
     </body>
 </html>
