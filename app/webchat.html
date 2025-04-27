@@ -278,7 +278,7 @@ function init(){
   nxt = document.querySelector("#dgcss-next");
   title = document.querySelector("#dgcss-title");
   cont = document.querySelector("#content");
-  prv.addEventListener("click", prevPage);
+  prv.addEventListener("click", volta);
   nxt.addEventListener("click", nextPage);
   setCurrent(current);
 }
@@ -288,11 +288,12 @@ function setCurrent(current){
   prv.disabled = current<=1?true:false; 
   nxt.disabled = current>=count?true:false;
 }
+        /*
 function prevPage(){
- alert("oii");
   current = current<=1?1:--current;
   setCurrent(current);
 }
+*/
 function nextPage(){
   current = current>=count?count:++current; 
   setCurrent(current);
