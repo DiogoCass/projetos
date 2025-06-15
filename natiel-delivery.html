@@ -1,9 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta class="statusbar" name="theme-color" content="#ff5e3a">
-  <meta property=og:image content="https://i.ibb.co/CpF6CVSh/file-0000000082b8622faeb74650f72a9799.png"/><link rel="shortcut icon" href="https://i.ibb.co/CpF6CVSh/file-0000000082b8622faeb74650f72a9799.png" type="image/x-icon"><link rel="apple-touch-icon" href="https://i.ibb.co/CpF6CVSh/file-0000000082b8622faeb74650f72a9799.png">
+  <meta property=og:image content="https://i.ibb.co/CpF6CVSh/file-0000000082b8622faeb74650f72a9799.png"/>
+  <link rel="shortcut icon" href="https://i.ibb.co/CpF6CVSh/file-0000000082b8622faeb74650f72a9799.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="https://i.ibb.co/CpF6CVSh/file-0000000082b8622faeb74650f72a9799.png">
   <meta name="description" content="🍕 O lanche ideal para fazer seu dia mais feliz 🙂">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -13,7 +14,7 @@
     body { background: #fff8f1; color: #333; line-height: 1.6; }
 
     header { background: #ff5e3a; color: white; padding: 1.5rem 2rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    header h1 { font-size: clamp(1.0rem,1.50rem,1.6rem);}
+    header h1 { font-size: clamp(1.0rem,1.50rem,1.6rem); }
 
     .hero {
       padding: 3rem 2rem;
@@ -21,8 +22,8 @@
       background: linear-gradient(to right, #fff0e5, #ffe6d9);
     }
 
-    .hero h2 { font-size: 2rem; margin-bottom: 1rem; color: #d64b26; }
-    .hero p { font-size: 1.1rem; margin-bottom: 2rem; color: #444; }
+    .hero h2 { font-size: 1.2rem; margin-bottom: 1rem; color: #d64b26; }
+    .hero p { font-size: prem; margin-bottom: 2rem; color: #444; }
     .hero button {
       background: #ff5e3a; color: white; border: none; padding: 1rem 2rem;
       font-size: 1rem; border-radius: 30px; cursor: pointer; transition: background 0.3s ease;
@@ -39,9 +40,27 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.05); text-align: center;
       transition: transform 0.3s ease;
     }
-    .card:hover { transform: scale(1.03); }
+    .card:hover { transform: scale(1.01); }
     .card h3 { margin-bottom: 0.5rem; color: #d64b26; }
     .card p { color: #555; }
+
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ffd1c1;
+      text-align: center;
+    }
+
+    thead {
+      background-color: #ffe5db;
+      color: #d64b26;
+    }
 
     .form-section {
       max-width: 600px; margin: 2rem auto; background: white;
@@ -100,44 +119,62 @@
   <section class="hero">
     <img width="280" style="border-radius: 30px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC81YelSjl2w8x-D2nmU3LMpe4j_Ds4vUnc4IF3YC_b8uTQHnCQysD88A&s=10"><br><br>
     <h2>Sabor e carinho em cada mordida</h2>
-    <p>
-    Deliciosas mini pizzas artesanais feitas com ingredientes selecionados, entregues quentinhas na sua porta!</p>
+    <p>Deliciosas mini pizzas congeladas, feitas com ingredientes selecionados. Podem ser entregues na sua casa e retiradas no local.<br><b style="font-size: 15px;">Realizo também encomendas para festas e aniversários.</b></p>
     <button onclick="document.getElementById('pedido').scrollIntoView({behavior: 'smooth'})">Fazer meu pedido</button>
   </section>
 
   <section class="card-section">
     <div class="card">
       <h3>🍕 Sabores</h3>
-      <p>Calabresa, Frango, Carne, Milho, Presunto e Brócolis.</p>
+      <p><b>Salgados:</b> Calabresa, Frango, Carne, Milho, Presunto e Brócolis.</p><br>
+      <p><b>Doces:</b> Prestígio, Charge, Oreo, MMs, Chocolate, Chocolate branco</p>
     </div>
     <div class="card">
       <h3>📦 Quantidades</h3>
-      <p>20 por R$25, 50 por R$60 ou 100 por R$120.</p>
+      <p>15 por 50R$, 50 por 75R$, <br>ou 100 por 145R$.</p>
     </div>
     <div class="card">
       <h3>📍 Entrega</h3>
-      <p>Entrega rápida em sua casa. Aceita PIX ou Dinheiro.</p>
+      <p>Entrega rápida em sua casa.<br>Aceita PIX ou Dinheiro.</p>
+    </div>
+    <div class="card" style="grid-column: 1 / -1;">
+      <h3>⏰ Horários de funcionamento</h3>
+      <table>
+        <thead>
+          <tr><th>Dia</th><th>Horário</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Segunda a Sexta</td><td>16:00 – 22:00</td></tr>
+          <tr><td>Sábado</td><td>11:30 – 22:00</td></tr>
+          <tr><td>Domingo</td><td>O dia todo</td></tr>
+        </tbody>
+      </table>
     </div>
   </section>
-
-  <section class="form-section" id="pedido">
+  <div style="margin-top: -55px; position: absolute" id="pedido"></div>
+  <section style="margin-top: -16px" class="form-section">
     <h2>Monte seu pedido</h2>
 
     <label for="quantidade">Quantidade de mini pizzas:</label>
     <select id="quantidade">
-      <option value="20">20 unidades (R$25)</option>
-      <option value="50">50 unidades (R$60)</option>
-      <option value="100">100 unidades (R$120)</option>
+      <option value="20">15 unidades (50R$)</option>
+      <option value="50">50 unidades (75R$)</option>
+      <option value="100">100 unidades (145R$)</option>
     </select>
 
-    <label for="sabor">Escolha o sabor:</label>
-    <select id="sabor">
+    <label for="sabor">Escolha os sabores (pode selecionar mais de um):</label>
+    <select id="sabor" multiple size="6">
       <option>Calabresa</option>
       <option>Frango</option>
       <option>Carne</option>
       <option>Milho</option>
       <option>Presunto</option>
       <option>Brócolis</option>
+      <option>Prestígio</option>
+      <option>Charge</option>
+      <option>Oreo</option>
+      <option>MMs</option>
+      <option>Chocolate branco</option>
     </select>
 
     <label for="endereco">Endereço de entrega:</label>
@@ -172,10 +209,10 @@
     </div>
     </small>
   </footer>
-
   <script>
     function enviarPedido() {
-      const sabor = document.getElementById("sabor").value;
+      const saborSelect = document.getElementById("sabor");
+      const saboresSelecionados = Array.from(saborSelect.selectedOptions).map(opt => opt.value);
       const endereco = document.getElementById("endereco").value.trim();
       const pagamento = document.getElementById("pagamento").value;
       const quantidade = document.getElementById("quantidade").value;
@@ -190,11 +227,10 @@
       }
 
       const msg = `Olá Natiel! Quero pedir mini pizzas.%0AQuantidade: ${quantidade} unidades (${preco})%0A` +
-                  `Sabor: ${sabor}%0AEndereço: ${endereco}%0APagamento: ${pagamento}`;
+                  `Sabores: ${saboresSelecionados.join(", ")}%0AEndereço: ${endereco}%0APagamento: ${pagamento}`;
       const url = `https://wa.me/555597066956?text=${msg}`;
       window.open(url, "_blank");
     }
   </script>
-
 </body>
 </html>
