@@ -157,7 +157,7 @@
 
     <label for="quantidade">Quantidade de mini pizzas:</label>
     <select id="quantidade">
-      <option value="20">15 unidades (50R$)</option>
+      <option value="15">15 unidades (25R$)</option>
       <option value="50">50 unidades (75R$)</option>
       <option value="100">100 unidades (145R$)</option>
     </select>
@@ -216,9 +216,9 @@
       const pagamento = document.getElementById("pagamento").value;
       const quantidade = document.getElementById("quantidade").value;
 
-      let preco = "R$25";
-      if (quantidade == "50") preco = "R$60";
-      if (quantidade == "100") preco = "R$120";
+      let preco = "25R$";
+      if (quantidade == "50") preco = "75R$";
+      if (quantidade == "100") preco = "145R$";
 
       if (!endereco) {
         alert("Por favor, informe o endereço de entrega.");
