@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta property=og:image content="https://i.ibb.co/0pPfVVQn/file-00000000b80861f784bdc1577ab98cd9-1.png"/>
+  <link rel="shortcut icon" href="https://i.ibb.co/0pPfVVQn/file-00000000b80861f784bdc1577ab98cd9-1.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="https://i.ibb.co/0pPfVVQn/file-00000000b80861f784bdc1577ab98cd9-1.png">
+  <title>Avaliare - Pesquisa de Satisfação</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <style>
+    :root {
+      --primary: #2196f3;
+      --secondary: #00bcd4;
+      --light: #f4f4f4;
+      --dark: #222;
+      --accent: #ff9800;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width:100vw;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 20px 10px;
+    }
+
+    nav a {
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+      font-size: 8pt;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--primary);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--secondary),var(--primary));
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: 20% 0 70% 80%;
+      background-attachment: fixed;
+      color: #fff;
+      padding: 100px 20px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3em;
+    }
+
+    header p {
+      font-size: 1.3em;
+      margin-top: 10px;
+    }
+
+    header img.logo {
+      width: 200px;
+      height: 200px;
+      margin-bottom: -18px;
+      margin-top: -20px;
+    }
+
+    section {
+      padding: 60px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    section[id]::before {
+      content: "";
+      display: block;
+      height: 80px;
+      margin-top: -80px;
+      visibility: hidden;
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 16px;
+      font-size: 2em;
+      font-family: 'Playfair Display', serif;
+      position: relative;
+    }
+
+    h2::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--accent);
+      margin-top: 6px;
+      border-radius: 2px;
+    }
+    .ultimalinha::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: white;var(--accent);
+      margin-top: 10px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+    }
+
+    ul, ol {
+      padding-left: 20px;
+    }
+
+    ul li, ol li {
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .cta {
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .cta a {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 14px 30px;
+      background-color: #fff;
+      color: var(--primary);
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, background-color 0.3s;
+    }
+
+    .cta a:hover {
+      transform: scale(1.05);
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    footer {
+      background: #e0e0e0;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+    }
+
+    form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 40px auto;
+    }
+
+    form h3 {
+      margin-bottom: 20px;
+      color: var(--primary);
+      font-family: 'Playfair Display', serif;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: var(--accent);
+    }
+
+    header::before, header::after {
+      content: "";
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      animation: float 10s infinite ease-in-out;
+    }
+
+    header::after {
+      width: 200px;
+      height: 200px;
+      top: auto;
+      bottom: -80px;
+      left: -80px;
+      animation-delay: 5s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(157deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+  </style>
+</head>
+<body>
+  <nav id="menu">
+    <a href="#problema">Problema</a>
+    <a href="#solucao">Solução</a>
+    <a href="#funciona">Funciomento</a>
+    <a href="#beneficios">Benefícios</a>
+    <a href="#planos">Planos</a>
+    <a href="#contato">Contato</a>
+  </nav>
+
+  <header>
+    <img src="https://i.postimg.cc/630jbP6R/holding-phone-hand-gesture-6580690-5526756.png" alt="Logo Avaliare" class="logo">
+    <h1>Avaliare</h1>
+    <p>Sistema inteligente de pesquisa de satisfação para prestadores de serviço</p>
+  </header>
+
+  <section id="problema">
+    <h2>O Problema</h2>
+    <ul>
+      <li>Empresas não sabem o que os clientes pensam após o atendimento</li>
+      <li>Hoje em dia, cliente insatisfeito não reclama, ele simplesmente não volta</li>
+      <li>Além de não voltar, ele ainda te contraindica para outras pessoas</li>
+    </ul>
+    <p><em>“Você não consegue resolver um problema que nem sabe que existe.”</em></p>
+  </section>
+
+  <section id="solucao">
+    <h2>A Solução: Avaliare</h2>
+    <p>Um sistema moderno de pesquisa de satisfação por celular, que permite coletar avaliações de forma simples, rápida e inteligente.</p>
+    <p><strong>Ideal para técnicos, instaladores e prestadores de serviço.</strong></p>
+  </section>
+
+  <section id="funciona">
+    <h2>Como Funciona?</h2>
+    <ol>
+      <li>O técnico finaliza o atendimento</li>
+      <li>O cliente aponta a câmera para um QR Code ou recebe um link</li>
+      <li>Ele responde 3 a 5 perguntas rápidas</li>
+      <li>A empresa recebe tudo em tempo real</li>
+    </ol>
+  </section>
+
+  <section id="beneficios">
+    <h2>Benefícios</h2>
+    <ul>
+      <li>Descubra o que seus clientes realmente pensam</li>
+      <li>Detecte falhas antes que se tornem reclamações</li>
+      <li>Valorize os melhores profissionais</li>
+      <li>Tome decisões com base em dados</li>
+      <li>Melhore sua reputação e atendimento</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Diferenciais do Avaliare</h2>
+    <ul>
+      <li>Resposta em menos de 1 minuto</li>
+      <li>Interface simples e moderna (estilo quiz)</li>
+      <li>Relatórios automáticos</li>
+      <li>Personalizável com sua marca</li>
+      <li>Segurança com tecnologia Google</li>
+    </ul>
+  </section>
+
+  <section id="planos">
+    <h2>Planos e Preços</h2>
+    <table>
+      <tr><th>Plano</th><th>Ideal para</th><th>Valor</th></tr>
+      <tr><td>Básico</td><td>Autônomos</td><td>R$ 29/mês</td></tr>
+      <tr><td>Profissional</td><td>Empresários</td><td>R$ 68/mês</td></tr>
+      <tr><td>Premium</td><td>Grandes Empresas</td><td>R$ 97/mês</td></tr>
+    </table>
+    <p><strong>Todos os planos incluem:</strong> personalização, relatórios, QR code e suporte.</p>
+  </section>
+
+  <section>
+    <h2>Quem está por trás?</h2>
+    <p>Idealizado por <strong onclick="window.location.href='https://codiogo-css.droppages.com'">Diogo Cassemiro</strong>, desenvolvedor e fundador da Avaliare.</p>
+    <p>Compromisso com a qualidade no atendimento e na tecnologia.</p>
+  </section>
+
+  <section id="contato">
+    <form>
+      <h3>Solicite uma demonstração gratuita</h3>
+      <input type="text" name="nome" placeholder="Seu nome" required>
+      <input type="email" name="email" placeholder="Seu e-mail" required>
+      <textarea name="mensagem" rows="4" placeholder="Mensagem ou dúvida..."></textarea>
+      <button type="submit">Enviar</button>
+      <div id="form-status" style="text-align:center; margin-top:10px;"></div>
+    </form>
+  </section>
+
+  <div class="cta">
+    <center><h2 class="ultimalinha" style="color: white;">Vamos conversar?</h2></center>
+    <p>Entre em contato agora mesmo para transformar sua empresa com o Avaliare</p>
+    <a href="https://wa.me/555196748252">Fale conosco</a>
+  </div>
+
+  <footer>
+    &copy; 2025 Avaliare - Todos os direitos reservados <br>
+    <p onclick="window.location.href='https://codiogo-css.droppages.com'" style="font-size:8pt; font-weight: bold">Desenvolvido por Diogo C.Cass </p>
+  </footer>
+
+  <script>
+    ScrollReveal().reveal('section', {
+      origin: 'bottom',
+      distance: '30px',
+      duration: 800,
+      easing: 'ease-in-out',
+      reset: false,
+      interval: 100
+    });
+
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll("nav a");
+
+    window.addEventListener("scroll", () => {
+      let current = "";
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 90;
+        if (pageYOffset >= sectionTop) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === `#${current}`) {
+          link.classList.add("active");
+        }
+      });
+    });
+
+    // Envio do formulário
+    const form = document.querySelector("form");
+    const statusDiv = document.getElementById("form-status");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      statusDiv.innerHTML = '<p style="color: #666;">Enviando mensagem...</p>';
+
+      const data = {
+        nome: form.nome.value,
+        email: form.email.value,
+        mensagem: form.mensagem.value
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbxWwkDaUqIFPUWwhp89RFt_T4FqNAxeYZYJrGUReAFPW72oLesurX_MbPiDR2WJFl94/exec", {
+        method: "POST",
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (response.ok) {
+          statusDiv.innerHTML = '<p style="color: green; font-weight: bold;">Mensagem enviada com sucesso!</p>';
+          form.reset();
+        } else {
+          statusDiv.innerHTML = '<p style="color: red;">Erro ao enviar. Tente novamente.</p>';
+        }
+      })
+      .catch(error => {
+        statusDiv.innerHTML = '<p style="color: red;">Erro de conexão. Verifique sua internet.</p>';
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>
