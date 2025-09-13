@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SaaS de Feedback</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 10px; }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .msg { margin-top: 15px; text-align: center; }
+    .card {
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      padding: 10px;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxUSXKjgDFwa-n8AHA5aa3uZHsy9jTLxlsmLm--3ONxyVExyT0udj1eDg7pbai-_c6x/exec'; // 🔥 substitua pela URL gerada no deploy
+
+    function parseQuery(query) {
+      const obj = {};
+      if (!query) return obj;
+      query.split('&').forEach(p => {
+        const [k, v] = p.split('=');
+        obj[k] = decodeURIComponent(v);
+      });
+      return obj;
+    }
+
+    function render() {
+      const hash = location.hash.slice(1);
+      const [route, queryStr] = hash.split('?');
+      const params = parseQuery(queryStr);
+      const app = document.getElementById('app');
+
+      if (route === 'cadastro') return renderCadastro(app);
+      if (route === 'formulario') return renderFormulario(app, params);
+      if (route === 'dashboard') return renderDashboard(app, params);
+      renderHome(app);
+    }
+
+    function renderHome(el) {
+      el.innerHTML = `
+        <h2>Bem-vindo</h2>
+        <p><a href="#cadastro">Cadastrar prestador</a></p>
+        <p><a href="#formulario?userId=EXEMPLO">Formulário</a></p>
+        <p><a href="#dashboard?userId=EXEMPLO">Dashboard</a></p>
+      `;
+    }
+
+    function renderCadastro(el) {
+      el.innerHTML = `
+        <h2>Cadastro</h2>
+        <form id="cadastroForm">
+          <label>Nome</label>
+          <input type="text" id="nome" required>
+          <label>Email</label>
+          <input type="email" id="email" required>
+          <button type="submit">Cadastrar</button>
+        </form>
+        <div class="msg" id="cadastroMsg"></div>
+      `;
+      document.getElementById('cadastroForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const nome = document.getElementById('nome').value;
+        const email = document.getElementById('email').value;
+        const res = await fetch(API_URL + '?tipo=cadastro', {
+          method: 'POST',
+          body: JSON.stringify({ nome, email })
+        });
+        const data = await res.json();
+        document.getElementById('cadastroMsg').innerHTML = `
+          ✅ Cadastrado!<br>
+          Link do formulário: <code>#formulario?userId=${data.id}</code><br>
+          Link do dashboard: <code>#dashboard?userId=${data.id}</code>
+        `;
+      };
+    }
+
+    function renderFormulario(el, params) {
+      if (!params.userId) return el.innerHTML = '<p>userId não informado.</p>';
+      el.innerHTML = `
+        <h2>Enviar Feedback</h2>
+        <form id="formFeedback">
+          <label>Seu nome</label>
+          <input type="text" id="cliente" required>
+          <label>Nota</label>
+          <select id="nota" required>
+            <option value="">Escolha</option>
+            <option value="1">1 - Ruim</option>
+            <option value="2">2</option>
+            <option value="3">3 - Médio</option>
+            <option value="4">4</option>
+            <option value="5">5 - Excelente</option>
+          </select>
+          <label>Comentário</label>
+          <textarea id="comentario" required></textarea>
+          <button type="submit">Enviar</button>
+        </form>
+        <div class="msg" id="formMsg"></div>
+      `;
+      document.getElementById('formFeedback').onsubmit = async function(e) {
+        e.preventDefault();
+        const feedback = {
+          userId: params.userId,
+          cliente: document.getElementById('cliente').value,
+          nota: document.getElementById('nota').value,
+          comentario: document.getElementById('comentario').value
+        };
+        const res = await fetch(API_URL + '?tipo=feedback', {
+          method: 'POST',
+          body: JSON.stringify(feedback)
+        });
+        const data = await res.json();
+        document.getElementById('formMsg').innerText = data.success ? '✅ Enviado!' : '❌ Erro';
+        e.target.reset();
+      };
+    }
+
+    function renderDashboard(el, params) {
+      if (!params.userId) return el.innerHTML = '<p>userId não informado.</p>';
+      el.innerHTML = `<h2>Dashboard</h2><div id="feedbacks">Carregando...</div>`;
+      fetch(API_URL + '?tipo=feedbacks&userId=' + params.userId)
+        .then(res => res.json())
+        .then(feedbacks => {
+          const div = document.getElementById('feedbacks');
+          if (!feedbacks.length) return div.innerHTML = 'Nenhum feedback ainda.';
+          div.innerHTML = '';
+          feedbacks.forEach(fb => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <strong>${fb.cliente}</strong> - Nota: ${fb.nota}<br>
+              ${fb.comentario}<br>
+              <small>${new Date(fb.data).toLocaleString()}</small>
+            `;
+            div.appendChild(card);
+          });
+        });
+    }
+
+    window.addEventListener('hashchange', render);
+    window.addEventListener('load', render);
+  </script>
+</body>
+</html>
