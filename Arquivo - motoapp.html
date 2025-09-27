@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happynation — Perfis Profissionais</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Feather icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  <!-- QRCode lib -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+
+  <style>
+    /* Small extra styles */
+    body { background: linear-gradient(180deg,#f8fafc 0%, #ffffff 60%); }
+    .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(6px); box-shadow: 0 8px 30px rgba(2,6,23,0.06); border-radius: 14px; }
+    .accent { background: linear-gradient(90deg,#06b6d4,#3b82f6); -webkit-background-clip: text; color: transparent; }
+    .badge-soft { background: rgba(59,130,246,0.08); color: #1e3a8a; padding: 6px 10px; border-radius: 999px; font-weight:600; font-size:0.85rem; }
+  </style>
+</head>
+<body class="min-h-screen font-sans text-gray-800">
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-sky-500 to-teal-500 text-white flex items-center justify-center font-bold">H</div>
+        <div>
+          <div class="font-bold text-lg">Happynation</div>
+          <div class="text-sm text-gray-500">Perfis profissionais para motoristas</div>
+        </div>
+      </div>
+      <nav class="flex items-center gap-3">
+        <a href="#/" class="text-sm text-gray-700 hover:underline">Home</a>
+        <a href="#/cadastro" class="px-3 py-2 bg-sky-600 text-white rounded-lg text-sm">Criar perfil</a>
+        <a href="#/admin" class="text-sm text-gray-700 hover:underline">Admin</a>
+      </nav>
+    </header>
+
+    <main id="app"></main>
+
+    <footer class="mt-10 text-center text-gray-500 small-muted">
+      © Happynation • PIX: <code>developerdiogo@gmail.com</code>
+    </footer>
+  </div>
+
+<script>
+/* ====== CONFIG ======
+   - Cole a URL do seu Apps Script Web App na constante API_URL
+   - Mantenha a senha admin como 'HAPPYNATION' (cliente-side)
+   - A planilha deve ter uma aba chamada 'Perfis' com cabeçalhos (ver instruções abaixo)
+*/
+const API_URL = "https://script.google.com/macros/s/AKfycbwp0J9Pdy-RhAIGUWXA3y4hUp6xCW4pxGeQfM71RSS9kJWhc428vGC1zBcnBDAnAQw-/exec"; // <-- substitua aqui
+const ADMIN_PASS = 'HAPPYNATION';
+
+/* ====== UTIL ====== */
+function uid(len=32){ const arr=new Uint8Array(len/2); crypto.getRandomValues(arr); return Array.from(arr,b=>('0'+b.toString(16)).slice(-2)).join(''); }
+function fmtMoney(v){ return Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function el(id){ return document.getElementById(id); }
+function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* ====== ROUTER ====== */
+window.addEventListener('hashchange', router);
+window.addEventListener('load', router);
+function router(){
+  const hash = location.hash || '#/';
+  if(hash.startsWith('#/cadastro')) renderCadastro();
+  else if(hash.startsWith('#/preview/')) renderPreview(hash.split('/')[2]);
+  else if(hash.startsWith('#/pagamento/')) renderPagamento(hash.split('/')[2]);
+  else if(hash.startsWith('#/admin')) renderAdmin();
+  else if(hash.startsWith('#/profile/')) renderProfile(hash.split('/')[2]);
+  else renderLanding();
+}
+
+/* ====== VIEWS ====== */
+function renderLanding(){
+  document.getElementById('app').innerHTML = `
+    <section class="grid lg:grid-cols-2 gap-6 items-center">
+      <div class="glass p-8">
+        <h1 class="text-4xl font-extrabold">Transforme seu serviço em <span class="accent">confiança</span> e clientes</h1>
+        <p class="mt-4 text-gray-600">Crie um perfil profissional com foto, informações do veículo, preço e um link público com QR Code — para divulgar no WhatsApp, redes sociais ou imprimir.</p>
+        <div class="mt-6 flex gap-3">
+          <a href="#/cadastro" class="px-4 py-2 bg-sky-600 text-white rounded-lg shadow">Criar meu perfil</a>
+          <a href="#/admin" class="px-4 py-2 border rounded-lg text-gray-700">Painel admin</a>
+        </div>
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3">
+            <div class="font-semibold">Rápido</div>
+            <div class="text-sm text-gray-500">Cadastro em poucos minutos</div>
+          </div>
+          <div class="p-3">
+            <div class="font-semibold">Compartilhável</div>
+            <div class="text-sm text-gray-500">Link + QR Code</div>
+          </div>
+          <div class="p-3">
+            <div class="font-semibold">Profissional</div>
+            <div class="text-sm text-gray-500">Perfil moderno e apresentável</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div class="glass p-6">
+          <h3 class="font-bold">Plano único</h3>
+          <div class="mt-3 flex items-center justify-between">
+            <div>
+              <div class="text-2xl font-bold">29,90</div>
+              <div class="text-sm text-gray-500">Pagamento por PIX</div>
+            </div>
+            <div>
+              <span class="badge-soft">Plano Básico</span>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 mt-4">Após pagar, o admin confirmará e gerará seu link público com QR Code.</p>
+          <a href="#/cadastro" class="mt-4 inline-block px-4 py-2 bg-sky-600 text-white rounded-lg">Cadastre-se</a>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderCadastro(){
+  document.getElementById('app').innerHTML = `
+    <div class="max-w-3xl mx-auto">
+      <div class="glass p-6">
+        <h2 class="text-2xl font-bold">Cadastro do motorista</h2>
+        <p class="text-sm text-gray-500">Preencha seus dados e siga para a pré-visualização. Após o pagamento via PIX, aguarde confirmação.</p>
+
+        <form id="formCadastro" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="text-sm font-medium">Nome completo</label>
+            <input name="name" required class="mt-1 w-full rounded-md border p-2" />
+          </div>
+          <div>
+            <label class="text-sm font-medium">Apelido / Nome comercial</label>
+            <input name="alias" class="mt-1 w-full rounded-md border p-2" placeholder="Ex: João Moto Entregas" />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Tipo de veículo</label>
+            <select name="vehicletype" class="mt-1 w-full rounded-md border p-2">
+              <option value="Moto">Moto</option>
+              <option value="Carro">Carro</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Marca / Modelo</label>
+            <input name="vehicle_model" required class="mt-1 w-full rounded-md border p-2" />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Placa</label>
+            <input name="plate" required class="mt-1 w-full rounded-md border p-2" />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Telefone / WhatsApp</label>
+            <input name="contact_phone" required class="mt-1 w-full rounded-md border p-2" />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">E-mail</label>
+            <input name="contact_email" type="email" required class="mt-1 w-full rounded-md border p-2" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="text-sm font-medium">Descrição (breve apresentação)</label>
+            <textarea name="bio" rows="3" class="mt-1 w-full rounded-md border p-2" placeholder="Ex: Entregas rápidas, responsável, 24h"></textarea>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Foto (URL) — opcional</label>
+            <input name="photo" class="mt-1 w-full rounded-md border p-2" placeholder="https://..." />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Preço sugerido (R$)</label>
+            <input name="price" value="29.90" class="mt-1 w-full rounded-md border p-2" />
+          </div>
+
+          <div class="sm:col-span-2 flex justify-end gap-3 mt-2">
+            <a href="#/" class="px-3 py-2 border rounded-lg">Voltar</a>
+            <button class="px-4 py-2 bg-sky-600 text-white rounded-lg" type="submit">Pré-visualizar & Pagar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('formCadastro').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const tempId = uid(16);
+    const profile = {
+      tempId,
+      name: f.get('name') || '', alias: f.get('alias') || '',
+      vehicletype: f.get('vehicletype') || 'Moto', vehicle_model: f.get('vehicle_model') || '',
+      plate: f.get('plate') || '', contact_phone: f.get('contact_phone') || '', contact_email: f.get('contact_email') || '',
+      bio: f.get('bio') || '', photo: f.get('photo') || '', price: parseFloat(f.get('price')||'29.90') || 29.90,
+      status: 'PENDENTE', createdAt: new Date().toISOString(), token: ''
+    };
+
+    // send to server (create)
+    try{
+      const resp = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create', profile }) });
+      const data = await resp.json();
+      if(data && data.ok){
+        // store server token/temp mapping if returned
+        profile.token = data.token || '';
+        // redirect to preview page using tempId
+        location.hash = '#/preview/' + profile.tempId;
+      } else {
+        alert('Erro ao enviar cadastro. Verifique o endpoint do Apps Script.');
+        console.error(data);
+      }
+    } catch(err){
+      alert('Erro ao conectar ao servidor. Veja console.'); console.error(err);
+    }
+  });
+}
+
+async function fetchProfiles(){
+  const res = await fetch(API_URL + '?action=list');
+  return await res.json();
+}
+
+async function renderPreview(tempId){
+  // fetch list and find tempId
+  const profiles = await fetchProfiles();
+  const p = profiles.find(x=>x.tempId === tempId);
+  if(!p){
+    // fallback: show a minimal preview with tempId only
+    document.getElementById('app').innerHTML = `<div class="glass p-6 max-w-3xl mx-auto"><h3>Pré-visualização</h3><p>Cadastro não encontrado. Se você acabou de cadastrar, aguarde alguns segundos e recarregue.</p></div>`;
+    return;
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="max-w-4xl mx-auto grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 glass p-6">
+        <div class="flex gap-6">
+          <div class="w-36 h-36 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+            ${p.photo ? `<img src="${escapeHtml(p.photo)}" class="w-full h-full object-cover">` : `<div class="text-gray-400">Sem foto</div>`}
+          </div>
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold">${escapeHtml(p.alias || p.name)}</h2>
+            <div class="text-gray-600 mt-2">${escapeHtml(p.bio)}</div>
+            <div class="mt-4 grid grid-cols-2 gap-2">
+              <div class="p-3 border rounded">${escapeHtml(p.vehicletype)}<div class="text-sm text-gray-500">Tipo</div></div>
+              <div class="p-3 border rounded">${escapeHtml(p.vehicle_model)}<div class="text-sm text-gray-500">Modelo</div></div>
+              <div class="p-3 border rounded">Placa: ${escapeHtml(p.plate)}<div class="text-sm text-gray-500">Placa</div></div>
+              <div class="p-3 border rounded">${fmtMoney(p.price)}<div class="text-sm text-gray-500">Preço sugerido</div></div>
+            </div>
+
+            <div class="mt-4 flex gap-3">
+              <a href="mailto:${encodeURIComponent(p.contact_email)}" class="px-4 py-2 bg-sky-600 text-white rounded">Contactar</a>
+              <button id="iPaidBtn" class="px-4 py-2 border rounded">Já paguei</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <h4 class="font-semibold">Instruções de pagamento (PIX)</h4>
+          <p class="text-sm text-gray-500">Faça o PIX para <strong>developerdiogo@gmail.com</strong>. No campo de descrição coloque: <code>${p.tempId}</code></p>
+          <div id="pix-area" class="mt-4 flex items-center gap-4"></div>
+        </div>
+      </div>
+
+      <div class="glass p-4">
+        <h4 class="font-semibold">Resumo</h4>
+        <div class="mt-2 text-sm text-gray-600">Contato: ${escapeHtml(p.contact_phone)} • ${escapeHtml(p.contact_email)}</div>
+        <div class="mt-2 text-sm text-gray-600">ID: <code>${p.tempId}</code></div>
+        <div class="mt-4">
+          <button id="copyBtn" class="px-3 py-2 border rounded w-full">Copiar instruções</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // generate QR with payment instructions (not EMV). We encode a readable payload.
+  const pixPayload = `PIX_TO:developerdiogo@gmail.com|AMOUNT:${(p.price||29.9).toFixed(2)}|DESCRIPTION:Pagamento perfil ${p.tempId}`;
+  QRCode.toDataURL(pixPayload, { width: 220 })
+    .then(url => {
+      document.getElementById('pix-area').innerHTML = `<img src="${url}" class="rounded-lg shadow">`;
+    });
+
+  document.getElementById('copyBtn').addEventListener('click', ()=>{
+    const text = `PIX para: developerdiogo@gmail.com
+Valor: ${fmtMoney(p.price)}
+Descrição: ${p.tempId}`;
+    navigator.clipboard.writeText(text).then(()=> alert('Instruções copiadas.'));
+  });
+
+  document.getElementById('iPaidBtn').addEventListener('click', async ()=>{
+    // call server to mark user indicated payment (optional)
+    await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'user_marked_paid', tempId: p.tempId }) }).catch(()=>{});
+    alert('Mensagem enviada. Aguarde confirmação do administrador.');
+  });
+}
+
+async function renderPagamento(tempId){
+  // similar to preview but focus on payment
+  await renderPreview(tempId);
+}
+
+async function renderAdmin(){
+  // password prompt
+  const pass = prompt('Insira a senha de administrador:');
+  if(pass !== ADMIN_PASS){ alert('Senha incorreta'); location.hash = '#/'; return; }
+
+  // fetch profiles
+  const profiles = await fetchProfiles();
+  document.getElementById('app').innerHTML = `
+    <div class="glass p-6">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="text-2xl font-bold">Painel Admin</h2>
+          <div class="text-sm text-gray-500">Verifique pagamentos e gere links</div>
+        </div>
+        <div class="flex gap-2">
+          <button id="exportBtn" class="px-3 py-2 border rounded">Export JSON</button>
+          <button id="logoutBtn" class="px-3 py-2 border rounded">Sair</button>
+        </div>
+      </div>
+
+      <div id="profilesList" class="space-y-4">
+        ${profiles.slice().reverse().map(p=>`
+          <div class="p-4 border rounded-lg flex justify-between items-start">
+            <div>
+              <div class="font-semibold">${escapeHtml(p.alias||p.name)}</div>
+              <div class="text-sm text-gray-600">${escapeHtml(p.bio)}</div>
+              <div class="text-xs text-gray-500 mt-2">ID: <code>${p.tempId}</code> • Criado: ${new Date(p.createdAt||p.createdAt||Date.now()).toLocaleString('pt-BR')}</div>
+            </div>
+            <div class="text-right">
+              <div class="font-bold mb-2">${fmtMoney(p.price)}</div>
+              <div class="mb-2"><span class="badge-soft">${p.status||p.status||'PENDENTE'}</span></div>
+              <div class="flex flex-col gap-2">
+                ${p.status!=='CONFIRMADO'?`<button data-action="markPaid" data-id="${p.tempId}" class="px-3 py-2 bg-green-600 text-white rounded">Marcar como PAGO</button>`:''}
+                <button data-action="genLink" data-id="${p.tempId}" class="px-3 py-2 border rounded">Gerar link & QR</button>
+                <button data-action="view" data-id="${p.tempId}" class="px-3 py-2 border rounded">Ver</button>
+                <button data-action="delete" data-id="${p.tempId}" class="px-3 py-2 border rounded text-red-600">Excluir</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('logoutBtn').addEventListener('click', ()=>{ location.hash = '#/'; });
+  document.getElementById('exportBtn').addEventListener('click', async ()=>{
+    const all = await fetchProfiles(); const blob = new Blob([JSON.stringify(all,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='profiles.json'; a.click(); URL.revokeObjectURL(url);
+  });
+
+  // attach handlers for actions
+  document.querySelectorAll('button[data-action]').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const action = btn.getAttribute('data-action');
+      const id = btn.getAttribute('data-id');
+      if(action === 'markPaid'){
+        await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'mark_paid', tempId: id }) });
+        alert('Marcado como pago'); renderAdmin();
+      }
+      if(action === 'genLink'){
+        // request server to generate token/link
+        const res = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'generate_link', tempId: id }) });
+        const data = await res.json();
+        if(data && data.ok){
+          // show link + QR
+          showGeneratedLink(id, data.link, data.token);
+          renderAdmin();
+        } else alert('Erro ao gerar link');
+      }
+      if(action === 'view'){
+        const profiles = await fetchProfiles(); const p = profiles.find(x=>x.tempId===id); if(p){ window.open(location.origin + location.pathname + '#/profile/' + (p.token||''), '_blank'); }
+      }
+      if(action === 'delete'){
+        if(!confirm('Excluir cadastro?')) return; await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'delete', tempId:id }) }); alert('Excluído'); renderAdmin();
+      }
+    });
+  });
+}
+
+function showGeneratedLink(tempId, link, token){
+  // open a small modal-like area
+  const container = document.createElement('div'); container.className='fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center';
+  container.innerHTML = `<div class="bg-white p-6 rounded-lg max-w-md w-full text-center">
+    <h3 class="font-bold mb-2">Link gerado</h3>
+    <div class="text-sm break-words mb-4">${link}</div>
+    <div id="gen-qr"></div>
+    <div class="mt-4 flex gap-2 justify-center">
+      <button id="copyLink" class="px-3 py-2 border rounded">Copiar</button>
+      <button id="downloadQR" class="px-3 py-2 border rounded">Baixar QR</button>
+      <button id="closeModal" class="px-3 py-2 bg-sky-600 text-white rounded">Fechar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(container);
+  QRCode.toDataURL(link, { width: 260 }).then(url=>{
+    document.getElementById('gen-qr').innerHTML = `<img src="${url}" class="mx-auto rounded-lg">`;
+    document.getElementById('downloadQR').onclick = ()=>{ const a=document.createElement('a'); a.href = url; a.download = `profile_${tempId}.png`; a.click(); };
+  });
+  document.getElementById('copyLink').onclick = ()=>{ navigator.clipboard.writeText(link).then(()=> alert('Link copiado')); };
+  document.getElementById('closeModal').onclick = ()=>{ container.remove(); };
+}
+
+async function renderProfile(token){
+  const profiles = await fetchProfiles();
+  const p = profiles.find(x=>x.token === token);
+  if(!p){ document.getElementById('app').innerHTML = `<div class="glass p-6 text-center"><h3 class="font-bold">Perfil não encontrado ou não confirmado</h3><p class="text-sm text-gray-500">Aguarde o admin gerar o link.</p></div>`; return; }
+
+  document.getElementById('app').innerHTML = `
+    <div class="glass p-6 max-w-4xl mx-auto">
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+        <div class="w-48 h-48 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+          ${p.photo?`<img src="${escapeHtml(p.photo)}" class="w-full h-full object-cover">`:'<div class="text-gray-400">Sem foto</div>'}
+        </div>
+        <div class="flex-1">
+          <h2 class="text-3xl font-bold">${escapeHtml(p.alias || p.name)}</h2>
+          <div class="text-gray-600 mt-2">${escapeHtml(p.bio)}</div>
+
+          <div class="mt-4 flex gap-3">
+            <div class="p-3 border rounded"><div class="text-sm text-gray-500">Veículo</div><div class="font-semibold">${escapeHtml(p.vehicletype)} — ${escapeHtml(p.vehicle_model)}</div></div>
+            <div class="p-3 border rounded"><div class="text-sm text-gray-500">Placa</div><div class="font-semibold">${escapeHtml(p.plate)}</div></div>
+            <div class="p-3 border rounded"><div class="text-sm text-gray-500">Preço</div><div class="font-semibold">${fmtMoney(p.price)}</div></div>
+          </div>
+
+          <div class="mt-6 flex gap-3 items-center">
+            <a href="mailto:${encodeURIComponent(p.contact_email)}?subject=${encodeURIComponent('Contato via perfil Happynation')}" class="px-4 py-2 bg-sky-600 text-white rounded">Entrar em contato</a>
+            <button id="downloadProfileQR" class="px-4 py-2 border rounded">Baixar QR</button>
+          </div>
+
+          <div id="profileQRArea" class="mt-6"></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // generate QR for profile link (current URL)
+  QRCode.toDataURL(location.href, { width: 260 }).then(url=>{
+    document.getElementById('profileQRArea').innerHTML = `<img src="${url}" class="w-48 rounded-lg">`;
+    document.getElementById('downloadProfileQR').onclick = ()=>{ const a=document.createElement('a'); a.href=url; a.download = `profile_${p.tempId}.png`; a.click(); };
+  });
+}
+
+/* ====== API helpers ====== */
+async function fetchProfiles(){
+  try{
+    const res = await fetch(API_URL + '?action=list');
+    return await res.json();
+  }catch(e){ console.error(e); return []; }
+}
+
+/* ====== Apps Script interaction: implemented actions: create, list, mark_paid, generate_link, delete, user_marked_paid */
+
+/* ====== Apps Script POST helper for actions (create, mark_paid, generate_link, delete, user_marked_paid) */
+async function postAction(body){
+  try{
+    const res = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    return await res.json();
+  }catch(e){ console.error(e); return { ok:false, error:e.message }; }
+}
+
+/* this is used in admin generate link flow */
+// The Apps Script will respond with {ok:true, token, link}
+
+/* ====== initial run: call router ====== */
+router();
+</script>
+
+</body>
+</html>
