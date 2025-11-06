@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Avaliare SPA Quiz — Google Sheets Backend</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+<style>
+  /* (styles are identical to original to preserve the frontend) */
+  * { box-sizing: border-box; font-family: "Poppins", sans-serif; margin:0; padding:0; }
+  html,body{height:100%;}
+  body { background:#f3f4f6; color:#111827; min-height:100vh; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  #splash{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#2563eb,#7c3aed); color:white; z-index:60; flex-direction:column;}
+  #splash h1{font-size:28px;margin-bottom:8px;letter-spacing:0.4px}
+  #splash p{opacity:0.92;font-size:14px}
+  #loginScreen { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background:rgba(59,130,246,0.08); z-index:50; }
+  #loginScreen .loginBox { background:white; padding:28px; border-radius:12px; width:92%; max-width:380px; box-shadow:0 10px 30px rgba(2,6,23,0.12); text-align:center; }
+  #loginScreen h2{margin-bottom:6px;color:#0f172a}
+  #loginScreen input { width:100%; padding:12px; margin-top:12px; border:1px solid #e6eef8; border-radius:10px; background:#fbfdff; }
+  #loginScreen .login-row{display:flex;gap:8px;margin-top:12px}
+  #loginScreen button { flex:1;padding:12px; border:none; border-radius:10px; background:#2563eb; color:white; font-size:15px; cursor:pointer; box-shadow:0 6px 18px rgba(37,99,235,0.18); }
+  header { position:fixed; top:0; left:0; right:0; height:64px; display:flex; align-items:center; gap:8px; background:white; padding:0 12px; box-shadow:0 2px 8px rgba(2,6,23,0.06); z-index:40; }
+  #headerLeft{display:flex; align-items:center; gap:8px; width:64px; justify-content:flex-start;}
+  #headerCenter{flex:1; text-align:center;}
+  header h1 { font-size:18px; color:#0f172a; margin:0; font-weight:600; }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:10px; border:none; background:transparent; cursor:pointer; color:#374151; }
+  .icon-btn:hover{background:#f3f4f6}
+  .icon-btn.primary{color:#2563eb}
+  .small-txt{font-size:13px;color:#6b7280}
+  main { padding-top:80px; padding-bottom:88px; min-height:calc(100vh - 148px); }
+  section { display:none; padding:20px; opacity:1; transition:opacity 280ms ease; }
+  section.active { display:block; }
+  .fade-out { opacity:0; transition:opacity 240ms ease; pointer-events:none; }
+  .fade-in { opacity:1; transition:opacity 240ms ease; }
+  nav { position:fixed; bottom:12px; left:12px; right:12px; height:64px; background:white; display:flex; justify-content:space-around; align-items:center; box-shadow:0 10px 30px rgba(2,6,23,0.08); border-radius:16px; z-index:40; }
+  nav button { background:none; border:none; font-size:28px; color:#9ca3af; transition:color 0.15s, transform 0.12s; padding:8px; border-radius:10px; cursor:pointer; }
+  nav button.active { color:#2563eb; transform:translateY(-4px); }
+  .app { background:white; border-radius:16px; padding:20px; max-width:920px; margin:0 auto; box-shadow:0 8px 30px rgba(2,6,23,0.06); }
+  h2 { text-align:left; margin-bottom:12px; color:#0f172a; font-size:20px; }
+  input, textarea { width:100%; padding:12px; margin-top:10px; border:1px solid #e6eef8; border-radius:10px; background:#fbfdff; }
+  textarea { resize:vertical; min-height:90px; }
+  .btn { width:100%; padding:12px; border:none; border-radius:10px; margin-top:12px; cursor:pointer; font-weight:600; font-size:15px; }
+  .btn-blue { background:#2563eb; color:white; box-shadow:0 8px 20px rgba(37,99,235,0.12); }
+  .btn-green { background:#10b981; color:white; }
+  .btn-gray { background:#f3f4f6; color:#374151; }
+  .btn-red { background:#ef4444; color:white; }
+  .flex { display:flex; gap:10px; align-items:center; }
+  .gap { gap:10px; }
+  .survey-card { background:linear-gradient(180deg, #ffffff, #fbfdff); border-radius:12px; padding:12px; box-shadow:0 6px 18px rgba(2,6,23,0.04); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .survey-meta{flex:1}
+  .survey-card h3 { margin:0 0 6px 0; font-size:16px; color:#0f172a; }
+  .survey-card .link { color:#2563eb; font-size:13px; word-break:break-all; margin-bottom:6px; display:block; }
+  .survey-card .actions { display:flex; flex-wrap: wrap; gap:8px; }
+  .btn-icon { display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; border:none; cursor:pointer; background:#f8fafc; color:#111827; font-size:13px; }
+  .btn-icon:hover{opacity:0.95}
+  .question-container { margin-top:12px; }
+  .option-input { display:flex; gap:8px; margin-top:8px; align-items:center; }
+  .option-input input { flex:1; padding:10px; border:1px solid #e6eef8; border-radius:8px; background:#fff; }
+  .remove-option { background:#fee2e2; color:#b91c1c; border:none; border-radius:8px; padding:6px 8px; cursor:pointer; font-size:13px; }
+  .quick-group { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .quick-group button { border:none; background:#f3f4f6; border-radius:10px; padding:8px 10px; cursor:pointer; font-size:13px; }
+  .quick-group button:hover { background:#eef2ff; color:#3730a3; }
+  #quizPublic { padding:0; display:none; min-height:10vh; }
+  #quizPublic .app {border-radius:0; box-shadow:none; min-height:10vh; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:16px; max-width:90vw; margin:0 auto; }
+  #quizPublic h2{text-align:center}
+  .results-table { display: block; overflow-x: auto; width: 100%; border-collapse: collapse; margin-top: 10px; -webkit-overflow-scrolling: touch; }
+  .results-table th, .results-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #eef2f7; font-size: 14px; word-break: break-word; white-space: nowrap; vertical-align: top; }
+  @media (max-width: 700px) { .results-table th, .results-table td { font-size: 13px; padding: 8px 6px; } }
+  .chip { padding:8px 10px; border-radius:999px; background:#f1f5f9; font-size:13px; color:#0f172a; }
+  .comments-panel { display:flex; justify-content:center; gap:18px; margin-top:14px; align-items:flex-start; flex-wrap:wrap;}
+  .comments-list { flex:1 1 420px; max-width:680px; }
+  .comment-item { background:#fff; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(2,6,23,0.04); margin-bottom:8px; }
+  .comment-meta { font-size:13px; color:#6b7280; margin-bottom:8px; display:flex; gap:8px; align-items:center;}
+  .tag-cloud { flex:0 0 260px; overflow-y: auto; background: #fff; padding:12px; border-radius:10px; box-shadow:0 4px 12px rgba(2,6,23,0.04); min-height:120px; }
+  .tag { display:inline-block; margin:6px; padding:6px 8px; border-radius:8px; background:#f1f5f9; font-size:13px; }
+  .pager { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+  @media (max-width:900px){ .comments-panel{flex-direction:column} .tag-cloud{width:100%} }
+  @media (max-width:700px){ nav{left:8px;right:8px} .survey-card{flex-direction:column; align-items:flex-start} header h1{font-size:16px} }
+  .modal-back{ position:fixed; inset:0; background:rgba(2,6,23,0.45); display:none; align-items:center; justify-content:center; z-index:80; }
+  .modal{ background:white; padding:18px; border-radius:10px; max-width:720px; width:92%; box-shadow:0 20px 50px rgba(2,6,23,0.2); }
+  .avatar { width:36px; height:36px; border-radius:999px; background:#e6eef8; display:inline-flex; align-items:center; justify-content:center; font-weight:700; color:#374151; margin-right:8px; }
+  button .material-icons-outlined { vertical-align: middle; position: relative; top: -1px; font-size: 20px; }
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash" style="display:flex">
+  <h1>Avaliare</h1>
+  <p>Carregando — um instante...</p>
+</div>
+
+<!-- Login -->
+<div id="loginScreen" style="background:linear-gradient(135deg,#2563eb,#7c3aed); display:none">
+  <div class="loginBox">
+    <h2>Acessar Sistema</h2>
+    <p class="small-txt">Informe o ID da sua empresa e a senha. Cada empresa visualizará apenas suas pesquisas.</p>
+    <input type="text" id="companyIdInput" placeholder="ID da Empresa (ex: empresa_xyz)">
+    <input type="password" id="passwordInput" placeholder="Senha">
+    <div class="login-row">
+      <button id="loginBtn">Entrar</button>
+      <button id="infoQuick" class="icon-btn" title="Info">
+        <span class="material-icons-outlined">info</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header id="headerMain" style="display:flex">
+  <div id="headerLeft">
+    <button id="backBtn" class="icon-btn" title="Voltar" style="visibility:hidden">
+      <span class="material-icons-outlined">arrow_back</span>
+    </button>
+  </div>
+  <div id="headerCenter"><h1 id="title">Início</h1></div>
+  <div id="headerRight">
+    <button id="infoBtn" class="icon-btn" title="Informações">
+      <span class="material-icons-outlined">logout</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- Home -->
+  <section id="home" class="active">
+    <div class="app">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px;">
+        <h2>Minhas Pesquisas</h2>
+        <div style="display:flex;gap:8px">
+          <button id="newFromHome" class="icon-btn primary" title="Criar novo">
+            <span class="material-icons-outlined">add_circle</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="surveysList"></div>
+      <p class="small-txt" style="margin-top:10px">Compartilhe o link (copiado) para que respondentes acessem sem login.</p>
+    </div>
+  </section>
+
+  <!-- Create Quiz -->
+  <section id="create">
+    <div class="app">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2><span class="material-icons-outlined" style="vertical-align:middle">edit</span> Criar / Editar Quiz</h2>
+      </div>
+
+      <div id="step1">
+        <label class="small-txt">Nome do Quiz</label>
+        <input id="quizName" placeholder="Nome do Quiz">
+        <label class="small-txt">Mensagem final (use $nomeDoRespondente)</label>
+        <textarea id="finalMsg" placeholder="Mensagem Final"></textarea>
+        <button class="btn btn-blue" id="goStep2">Continuar</button>
+      </div>
+
+      <div id="step2" style="display:none;">
+        <h2>Adicionar Questões</h2>
+        <div id="questionArea"></div>
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button class="btn btn-gray" id="addOptionBtn" style="flex:1"><span class="material-icons-outlined">add</span> Adicionar Opção</button>
+          <button class="btn btn-red" id="discardBtn" style="flex:0 0 140px"><span class="material-icons-outlined">delete</span> Deletar Questão</button>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button class="btn btn-gray" id="prevBtn" style="flex:1"><span class="material-icons-outlined">arrow_back</span> Voltar</button>
+          <button class="btn btn-green" id="nextBtn" style="flex:1">Próxima <span class="material-icons-outlined">arrow_forward</span></button>
+        </div>
+        <button class="btn btn-blue" id="generateBtn" style="display:none;margin-top:14px;"><span class="material-icons-outlined">rocket_launch</span> Gerar Pesquisa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard / Results -->
+  <section id="analysis">
+    <div class="app">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2><span class="material-icons-outlined" style="vertical-align:middle">bar_chart</span> Resultados</h2>
+        <div id="resultsActions"></div>
+      </div>
+
+    <div class="filters-bar" style="margin:10px 0; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+      <input type="text" id="searchInput" placeholder="Buscar por nome, pergunta, resposta ou comentário..." style="flex:1; padding:10px; border:1px solid #e6eef8; border-radius:8px; background:#fbfdff;">
+      <button id="filterBtn" class="btn btn-blue" style="flex:0 0 auto;">Aplicar busca</button>
+    </div>
+
+    <div id="summaryPanel" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+      <div class="chip">Total de respostas: <strong id="sumResponses">0</strong></div>
+      <div class="chip">Total de perguntas: <strong id="sumQuestions">0</strong></div>
+      <div class="chip">Última resposta: <strong id="sumLastDate">—</strong></div>
+    </div>
+
+    <div id="resultsArea"></div>
+
+    <div id="commentsInsights" style="margin-top:12px;"></div>
+
+    </div>
+  </section>
+
+  <!-- Public Quiz (fullscreen) -->
+  <section id="quizPublic">
+    <div class="app" id="quizPublicContent"></div>
+  </section>
+</main>
+
+<!-- Bottom nav -->
+<nav id="navMain">
+  <button id="navHome" class="material-icons-outlined active" title="Início">home</button>
+  <button id="navCreate" class="material-icons-outlined" title="Criar">add_circle_outline</button>
+  <button id="navAnalysis" class="material-icons-outlined" title="Resultados">analytics</button>
+</nav>
+
+<!-- Modal info -->
+<div id="modalInfo" class="modal-back">
+  <div class="modal">
+    <h3>Informações do sistema</h3>
+    <p style="margin-top:8px;color:#374151">Este sistema permite criar quizzes rápidos. Cada empresa deve usar seu próprio ID para acessar apenas seus conteúdos. Ao conectar com o Apps Script (Google Sheets) as pesquisas e respostas serão salvas na nuvem. (Senha padrão para criar/editar localmente: <strong>123</strong>)</p>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button id="modalClose" class="btn btn-gray">Fechar</button>
+      <button id="modalLogout" class="btn btn-red">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal to show full comment -->
+<div id="modalComment" class="modal-back">
+  <div class="modal" id="modalCommentContent"></div>
+</div>
+
+<script>
+/* -------------------------
+   CONFIG: Apps Script endpoint
+   ------------------------- */
+/*
+  INSTRUÇÕES:
+  - Substitua APPS_SCRIPT_BASE pela URL do seu WebApp do Google Apps Script (depois que publicar como "Executar como: Anyone, even anonymous" ou conforme o fluxo de autenticação que desejar).
+  - O Apps Script deverá aceitar requisições POST/GET com um parâmetro 'action' que pode ser:
+      'getSurveys' -> retorna lista de surveys do owner (passar ownerId)
+      'saveSurvey' -> salva/atualiza uma survey (body: survey JSON, ownerId)
+      'deleteSurvey' -> exclui uma survey (surveyId, ownerId)
+      'saveResponse' -> adiciona uma response a uma survey (surveyId, response, ownerId)
+  - Vou fornecer o código do Apps Script e o esquema da planilha quando você pedir (conforme combinado).
+*/
+const APPS_SCRIPT_BASE = 'https://script.google.com/macros/s/AKfycby4P3ZvpsnD7CmvIogDhstWMc23zef1DaKSWPaE5VEVPTDZ-yGIarrmGVVCKdYb3trDBg/exec'; // <-- substitua
+const USE_SERVER = true; // por segurança inicial, mantenha false enquanto não configurar o Apps Script
+
+/* -------------------------
+   Estado / Inicialização
+   ------------------------- */
+const storageKey='spa_surveys_v6';
+let surveys=[]; // will be loaded either from server or localStorage
+let questions=[{text:'',options:[]}];
+let currentIndex=0;
+let editingSurveyId=null;
+let ownerId = sessionStorage.getItem('spa_ownerId') || null;
+let isLoggedIn = !!ownerId; // if ownerId present, considered logged in
+
+let currentAnalysisSurveyId = null;
+
+/* Splash control */
+const splash = document.getElementById('splash');
+setTimeout(()=>{ splash.style.display='none'; initAfterSplash(); }, 800);
+
+/* run after splash */
+function initAfterSplash(){
+  if(!isLoggedIn) document.getElementById('loginScreen').style.display='flex';
+  else document.getElementById('loginScreen').style.display='none';
+  // load surveys from server if configured, otherwise from localStorage
+  if(isLoggedIn && USE_SERVER){
+    loadSurveysFromServer().then(()=>{ renderSurveysList(); handleRoute(); }).catch(err=>{ console.warn(err); loadSurveysFromLocal(); renderSurveysList(); handleRoute(); });
+  } else {
+    loadSurveysFromLocal();
+    renderSurveysList();
+    handleRoute();
+  }
+}
+
+/* -------------------------
+   Storage layer (server wrappers + fallback)
+   ------------------------- */
+function loadSurveysFromLocal(){
+  try{ surveys = JSON.parse(localStorage.getItem(storageKey)||'[]'); }catch(e){ surveys = []; }
+}
+function saveSurveysToLocal(){ localStorage.setItem(storageKey, JSON.stringify(surveys)); }
+
+/* Server calls (Apps Script) - returns JSON
+   The Apps Script must implement the actions described in the CONFIG comment above.
+*/
+
+async function serverRequest(payload){
+  if(!APPS_SCRIPT_BASE || APPS_SCRIPT_BASE.includes('REPLACE_WITH')) 
+    throw new Error('APPS_SCRIPT_BASE não configurado.');
+
+  const opts = {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  };
+  
+  const res = await fetch(APPS_SCRIPT_BASE, opts);
+  if(!res.ok) throw new Error('Erro na requisição ao servidor: ' + res.status);
+  
+  return res.json();
+}
+
+// Exemplo de uso:
+serverRequest({
+  action: "createSurvey",
+  id: "S001",
+  ownerId: "user_01",
+  name: "Avaliação Geral",
+  message: "Como foi seu atendimento?",
+  questionsJSON: JSON.stringify([{q:"Como foi o atendimento?"}]),
+  responsesJSON: "[]"
+})
+.then(r => console.log("✅ Sucesso:", r))
+.catch(e => console.error("❌ Erro:", e));
+async function loadSurveysFromServer(){
+  const resp = await serverRequest({action:'getSurveys', ownerId});
+  if(resp && Array.isArray(resp.surveys)) surveys = resp.surveys;
+  else surveys = [];
+}
+
+async function saveSurveyToServer(survey){
+  const resp = await serverRequest({action:'saveSurvey', ownerId, survey});
+  return resp;
+}
+
+async function deleteSurveyOnServer(surveyId){
+  const resp = await serverRequest({action:'deleteSurvey', ownerId, surveyId});
+  return resp;
+}
+
+async function saveResponseToServer(surveyId, response){
+  const resp = await serverRequest({action:'saveResponse', ownerId, surveyId, response});
+  return resp;
+}
+
+/* Unified save helpers that use server when USE_SERVER true, otherwise localStorage */
+async function saveSurveysUnified(){
+  if(USE_SERVER && isLoggedIn){
+    // push each survey to server (simple approach), better: batch/update endpoints
+    for(const s of surveys){
+      await saveSurveyToServer(s);
+    }
+    return;
+  } else {
+    saveSurveysToLocal();
+  }
+}
+
+/* -------------------------
+   Helpers
+   ------------------------- */
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function escapeHtml(str){ return String(str||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+function setLoggedInFor(owner){
+  ownerId = owner || null;
+  isLoggedIn = !!ownerId;
+  if(isLoggedIn) sessionStorage.setItem('spa_ownerId', ownerId);
+  else sessionStorage.removeItem('spa_ownerId');
+  document.getElementById('loginScreen').style.display = isLoggedIn ? 'none' : 'flex';
+}
+
+/* -------------------------
+   Navigation / header / fade
+   ------------------------- */
+function updateTitleFor(hash){
+  const titleEl = document.getElementById('title');
+  if(hash==='home' || !hash) titleEl.textContent='Bem Vindo :)';
+  else if(hash==='create') titleEl.textContent='Criar Quiz';
+  else if(hash==='analysis') titleEl.textContent='Resultados';
+  else if(hash.startsWith('#/quiz/')) titleEl.textContent='Quiz';
+  else titleEl.textContent='Avaliare';
+}
+function updateHeaderVisibility(hash){
+  const backBtn = document.getElementById('backBtn');
+  if(hash==='home' || !isLoggedIn){ backBtn.style.visibility='hidden'; }
+  else if(hash==='create' || hash==='analysis'){ backBtn.style.visibility='visible'; }
+  else backBtn.style.visibility='hidden';
+}
+function fadeToSection(targetId){
+  const sections = Array.from(document.querySelectorAll('section'));
+  const current = sections.find(s=>s.style.display==='block' || s.classList.contains('active'));
+  const target = document.getElementById(targetId);
+  if(!target) return;
+  if(current === target) return;
+  if(current){
+    current.classList.remove('active'); current.classList.add('fade-out');
+    setTimeout(()=>{ current.style.display='none'; current.classList.remove('fade-out');
+      target.style.display='block'; target.classList.add('active','fade-in'); setTimeout(()=> target.classList.remove('fade-in'), 260);
+    }, 240);
+  } else {
+    target.style.display='block'; target.classList.add('active','fade-in'); setTimeout(()=> target.classList.remove('fade-in'), 260);
+  }
+}
+function navigate(hash){
+  updateTitleFor(hash); updateHeaderVisibility(hash);
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  if(hash==='home'){ document.getElementById('navHome').classList.add('active'); fadeToSection('home'); }
+  else if(hash==='create'){ document.getElementById('navCreate').classList.add('active'); fadeToSection('create'); }
+  else if(hash==='analysis'){ document.getElementById('navAnalysis').classList.add('active'); fadeToSection('analysis'); }
+}
+function handleRoute(){
+  const hash = location.hash || '#home';
+  if(hash.startsWith('#/quiz/')){
+    const id = hash.split('/')[2];
+    document.getElementById('headerMain').style.display='none';
+    document.getElementById('navMain').style.display='none';
+    document.getElementById('loginScreen').style.display='none';
+    fadeToSection('quizPublic');
+    renderPublicQuiz(id);
+  } else {
+    document.getElementById('headerMain').style.display='flex';
+    document.getElementById('navMain').style.display='flex';
+    if(!isLoggedIn){
+      document.getElementById('loginScreen').style.display='flex';
+      updateTitleFor(hash.replace('#',''));
+      updateHeaderVisibility(hash.replace('#',''));
+      return;
+    }
+    navigate(hash.replace('#','')||'home');
+  }
+}
+window.addEventListener('hashchange', handleRoute);
+window.addEventListener('load', ()=>{ /* handled by splash */ });
+
+/* Back btn */
+document.getElementById('backBtn').onclick = ()=>{ if(window.history.length>1) window.history.back(); else { location.hash = '#home'; handleRoute(); } };
+
+/* Info modal */
+const modal = document.getElementById('modalInfo');
+document.getElementById('infoBtn').onclick = ()=>{ modal.style.display='flex'; };
+document.getElementById('infoQuick').onclick = ()=>{ modal.style.display='flex'; };
+document.getElementById('modalClose').onclick = ()=>{ modal.style.display='none'; };
+document.getElementById('modalLogout').onclick = ()=>{
+  setLoggedInFor(null); modal.style.display='none'; alert('Você saiu do sistema.'); location.hash='#home'; handleRoute();
+};
+
+/* -------------------------
+   Login (company-based)
+   ------------------------- */
+document.getElementById('loginBtn').onclick = async ()=>{
+  const comp = document.getElementById('companyIdInput').value.trim();
+  const pass = document.getElementById('passwordInput').value;
+  if(!comp) return alert('Informe o ID da empresa.');
+  // Basic local password check for backwards compatibility
+  if(pass !== '123' && !USE_SERVER){
+    return alert('Senha incorreta! (padrão local: 123)');
+  }
+  // Set owner and load surveys
+  setLoggedInFor(comp);
+  if(USE_SERVER){
+    try{
+      await loadSurveysFromServer();
+      renderSurveysList();
+      document.getElementById('loginScreen').style.display='none';
+      if(location.hash && !location.hash.startsWith('#/quiz/')) handleRoute();
+      else location.hash='#home';
+    }catch(err){
+      console.error(err);
+      alert('Falha ao conectar com o servidor. Verifique a configuração do Apps Script e o APPS_SCRIPT_BASE.');
+      // fallback: create empty set
+      surveys = [];
+      saveSurveysToLocal();
+      renderSurveysList();
+      document.getElementById('loginScreen').style.display='none';
+      location.hash='#home';
+    }
+  } else {
+    // local mode
+    loadSurveysFromLocal();
+    renderSurveysList();
+    document.getElementById('loginScreen').style.display='none';
+    if(location.hash && !location.hash.startsWith('#/quiz/')) handleRoute();
+    else location.hash='#home';
+  }
+};
+
+/* -------------------------
+   Surveys list rendering (keeps same UI)
+   ------------------------- */
+function renderSurveysList(){
+  const list = document.getElementById('surveysList'); list.innerHTML='';
+  if(surveys.length===0){ list.innerHTML='<p style="color:#6b7280">Nenhuma pesquisa criada ainda.</p>'; return; }
+  surveys.forEach(s=>{
+    const card = document.createElement('div'); card.className='survey-card';
+    const meta = document.createElement('div'); meta.className='survey-meta';
+    const h = document.createElement('h3'); h.textContent = s.name; meta.appendChild(h);
+    const link = document.createElement('div'); link.className='link'; link.textContent = location.href.split('#')[0] + '#/quiz/' + s.id;
+    meta.appendChild(link);
+    const actions = document.createElement('div'); actions.className='actions';
+    const accessBtn = document.createElement('button'); accessBtn.className='btn-icon'; accessBtn.title='Acessar (público)';
+    accessBtn.innerHTML = '<span class="material-icons-outlined">open_in_new</span> Abrir';
+    accessBtn.onclick = ()=>{ location.hash = '#/quiz/' + s.id; };
+    const resultsBtn = document.createElement('button'); resultsBtn.className='btn-icon'; resultsBtn.title='Ver resultados';
+    resultsBtn.innerHTML = '<span class="material-icons-outlined">bar_chart</span> Resultados';
+    resultsBtn.onclick = ()=> showResults(s.id);
+    const copyBtn = document.createElement('button'); copyBtn.className='btn-icon'; copyBtn.title='Copiar link';
+    copyBtn.innerHTML = '<span class="material-icons-outlined">content_copy</span> Copiar';
+    copyBtn.onclick = ()=>{ navigator.clipboard.writeText(location.href.split('#')[0]+'#/quiz/'+s.id); alert('Link copiado!'); };
+    const delBtn = document.createElement('button'); delBtn.className='btn-icon'; delBtn.title='Excluir pesquisa';
+    delBtn.innerHTML = '<span class="material-icons-outlined">delete</span> Excluir';
+    delBtn.onclick = async ()=>{
+      if(!confirm('Deseja excluir esta pesquisa?')) return;
+      if(USE_SERVER){
+        try{ await deleteSurveyOnServer(s.id); surveys = surveys.filter(x=>x.id!==s.id); renderSurveysList(); }catch(e){ alert('Erro ao excluir no servidor.'); console.error(e); }
+      } else {
+        surveys = surveys.filter(x=>x.id!==s.id); saveSurveysToLocal(); renderSurveysList();
+      }
+    };
+    actions.appendChild(accessBtn); actions.appendChild(resultsBtn); actions.appendChild(copyBtn); actions.appendChild(delBtn);
+    card.appendChild(meta); card.appendChild(actions); list.appendChild(card);
+  });
+}
+
+/* -------------------------
+   Create flow (keeps same UI)
+   ------------------------- */
+const questionArea=document.getElementById('questionArea');
+const addOptionBtn=document.getElementById('addOptionBtn');
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+const discardBtn=document.getElementById('discardBtn');
+const generateBtn=document.getElementById('generateBtn');
+
+document.getElementById('newFromHome').onclick = ()=> {
+  document.getElementById('quizName').value=''; document.getElementById('finalMsg').value='';
+  questions=[{text:'',options:[]}]; currentIndex=0; editingSurveyId=null;
+  document.getElementById('step1').style.display='block'; document.getElementById('step2').style.display='none';
+  location.hash='#create'; handleRoute();
+};
+
+document.getElementById('goStep2').onclick = ()=> {
+  const quizName=document.getElementById('quizName').value.trim();
+  const finalMsg=document.getElementById('finalMsg').value.trim();
+  if(!quizName||!finalMsg) return alert('Preencha todos os campos!');
+  document.getElementById('step1').style.display='none'; document.getElementById('step2').style.display='block';
+  renderQuestion();
+};
+
+generateBtn.onclick= async ()=>{
+  const allValid=questions.every(q=>q.text.trim() && q.options.length>0);
+  if(!allValid) return alert('Verifique todas as questões antes de gerar.');
+  const id = uid();
+  const survey = {
+    id,
+    ownerId: ownerId || 'local',
+    name:document.getElementById('quizName').value.trim(),
+    message:document.getElementById('finalMsg').value.trim(),
+    questions:JSON.parse(JSON.stringify(questions)),
+    responses:[]
+  };
+  surveys.push(survey);
+  if(USE_SERVER){
+    try{ await saveSurveyToServer(survey); alert('Pesquisa gerada e salva no servidor! Link copiado.'); }catch(e){ console.error(e); alert('Falha ao salvar no servidor. Salvando localmente.'); saveSurveysToLocal(); }
+  } else {
+    saveSurveysToLocal();
+  }
+  try{navigator.clipboard.writeText(location.href.split('#')[0]+'#/quiz/'+id);}catch(e){}
+  renderSurveysList();
+  alert('Pesquisa gerada com sucesso! Link copiado.');
+  location.hash='#home'; handleRoute();
+};
+
+function renderQuestion(){
+  const q=questions[currentIndex]||{text:'',options:[]};
+  questionArea.innerHTML='';
+  const qInput=document.createElement('input');
+  qInput.value=q.text; qInput.placeholder='Digite a pergunta';
+  qInput.oninput=()=>{ questions[currentIndex].text=qInput.value; updateGenerateBtn(); };
+  questionArea.appendChild(qInput);
+
+  const optionsDiv=document.createElement('div'); optionsDiv.id='optionsList'; questionArea.appendChild(optionsDiv);
+
+  q.options.forEach((opt,i)=>{
+    const row=document.createElement('div'); row.className='option-input';
+    const input=document.createElement('input'); input.value=opt; input.placeholder='Opção '+(i+1);
+    input.oninput=()=>{ questions[currentIndex].options[i]=input.value; updateGenerateBtn(); };
+    const removeBtn=document.createElement('button'); removeBtn.className='remove-option'; removeBtn.textContent='✕';
+    removeBtn.onclick=()=>{ questions[currentIndex].options.splice(i,1); renderQuestion(); };
+    row.appendChild(input); row.appendChild(removeBtn); optionsDiv.appendChild(row);
+  });
+
+  const quickWrap=document.createElement('div'); quickWrap.style.marginTop='12px';
+  quickWrap.innerHTML='<small class="small-txt">Opções rápidas</small>';
+  const quickGroup=document.createElement('div'); quickGroup.className='quick-group';
+  ['Sim','Não','Talvez','Ruim','Quase'].forEach(o=>{
+    const b=document.createElement('button'); b.textContent=o; b.onclick=()=>{ questions[currentIndex].options.push(o); renderQuestion(); }; quickGroup.appendChild(b);
+  });
+  const setBtn=(label,arr)=>{ const b=document.createElement('button'); b.textContent=label;
+    b.onclick=()=>{ questions[currentIndex].options.push(...arr); renderQuestion(); }; quickGroup.appendChild(b); };
+  setBtn('1-5',['1','2','3','4','5']); setBtn('Sim/Não',['Sim','Não']); setBtn('Emoji',['😊','😐','😞']);
+  quickWrap.appendChild(quickGroup); questionArea.appendChild(quickWrap);
+  updateGenerateBtn();
+}
+function updateGenerateBtn(){ const allValid=questions.every(q=>q.text.trim() && q.options.length>0); generateBtn.style.display=allValid?'block':'none'; }
+addOptionBtn.onclick=()=>{ questions[currentIndex].options.push(''); renderQuestion(); };
+prevBtn.onclick=()=>{ if(currentIndex>0){ currentIndex--; renderQuestion(); } else { document.getElementById('step1').style.display='block'; document.getElementById('step2').style.display='none'; } };
+nextBtn.onclick=()=>{ const q=questions[currentIndex]; if(!q.text.trim()) return alert('Digite o texto da questão!'); if(q.options.length===0) return alert('Adicione pelo menos uma opção!'); if(currentIndex===questions.length-1) questions.push({text:'',options:[]}); currentIndex++; renderQuestion(); };
+discardBtn.onclick=()=>{ if(questions.length===1) return alert('Ao menos uma questão é necessária!'); if(confirm('Deseja excluir esta questão?')){ questions.splice(currentIndex,1); if(currentIndex>0) currentIndex--; renderQuestion(); } };
+
+/* -------------------------
+   Public quiz (unchanged UI) but saving uses server when enabled
+   ------------------------- */
+function renderPublicQuiz(id){
+  const s = surveys.find(x=>x.id===id);
+  if(!s){ alert('Pesquisa não encontrada'); location.hash='#home'; handleRoute(); return; }
+  document.querySelectorAll('section').forEach(sec=>sec.style.display='none');
+  document.getElementById('quizPublic').style.display='block';
+  const container = document.getElementById('quizPublicContent'); container.innerHTML='';
+  const wizardDiv = document.createElement('div'); wizardDiv.className='app';
+  let step=0; let respondentName=''; let observationText = ''; const answers=[];
+  const nameStep = document.createElement('div'); nameStep.style.width='100%';
+  nameStep.innerHTML = '<h2>Informe seu nome</h2>';
+  const nameInput = document.createElement('input'); nameInput.placeholder='Digite seu nome'; nameInput.style.maxWidth='420px';
+  const startBtn = document.createElement('button'); startBtn.className='btn btn-blue'; startBtn.textContent='Iniciar Quiz';
+  startBtn.onclick = ()=>{ const n = nameInput.value.trim(); if(!n) return alert('Digite seu nome!'); respondentName = n; wizardDiv.removeChild(nameStep); step = 0; renderQuestionStep(); };
+  nameStep.appendChild(nameInput); nameStep.appendChild(startBtn); wizardDiv.appendChild(nameStep);
+
+  const questionDiv = document.createElement('div'); questionDiv.style.width='100%'; questionDiv.style.marginTop='8px';
+  const pagerDiv = document.createElement('div'); pagerDiv.style.display='flex'; pagerDiv.style.gap='8px'; pagerDiv.style.marginTop='12px';
+  const prevQBtn = document.createElement('button'); prevQBtn.className='btn btn-gray'; prevQBtn.style.flex='1'; prevQBtn.textContent='Voltar';
+  const nextQBtn = document.createElement('button'); nextQBtn.className='btn btn-blue'; nextQBtn.style.flex='1'; nextQBtn.textContent='Próxima';
+  prevQBtn.onclick = ()=> { if(step>0){ step--; renderQuestionStep(); } };
+  nextQBtn.onclick = ()=> {
+    if(step < s.questions.length){
+      const sel = questionDiv.querySelector('input[name="q_'+step+'"]:checked');
+      if(!sel) return alert('Selecione uma opção!');
+      answers[step] = sel.value; step++; renderQuestionStep();
+    } else if(step === s.questions.length){
+      const sel = questionDiv.querySelector('input[name="q_'+(step-1)+'"]:checked');
+      if(!sel && s.questions.length>0) return alert('Selecione uma opção!');
+      if(sel) answers[step-1] = sel.value;
+      step++; renderQuestionStep();
+    }
+  };
+
+  function renderQuestionStep(){
+    questionDiv.innerHTML='';
+    if(step < s.questions.length){
+      const q = s.questions[step];
+      const qTitle = document.createElement('h3'); qTitle.textContent = q.text; qTitle.style.marginBottom='10px';
+      questionDiv.appendChild(qTitle);
+      q.options.forEach((opt,i)=>{
+        const optDiv = document.createElement('div'); optDiv.style.marginTop='8px';
+        const inp = document.createElement('input'); inp.type='radio'; inp.name='q_'+step; inp.value=opt; inp.id='q_'+step+'_'+i;
+        const label = document.createElement('label'); label.htmlFor=inp.id; label.textContent=opt; label.style.marginLeft='8px';
+        if(answers[step] === opt) inp.checked = true;
+        optDiv.appendChild(inp); optDiv.appendChild(label); questionDiv.appendChild(optDiv);
+      });
+      if(!wizardDiv.contains(pagerDiv)){ pagerDiv.innerHTML=''; pagerDiv.appendChild(prevQBtn); pagerDiv.appendChild(nextQBtn); wizardDiv.appendChild(questionDiv); wizardDiv.appendChild(pagerDiv); }
+    } else if(step === s.questions.length){
+      const obsTitle = document.createElement('h3'); obsTitle.textContent = 'Observações (opcional)';
+      const obsTextarea = document.createElement('textarea'); obsTextarea.placeholder = 'Deixe aqui um comentário ou observação antes de enviar (opcional). Máx 600 caracteres.'; obsTextarea.maxLength = 600; obsTextarea.style.minHeight='110px'; obsTextarea.value = observationText;
+      const submitBtn = document.createElement('button'); submitBtn.className='btn btn-green'; submitBtn.textContent='Enviar respostas';
+      submitBtn.onclick = ()=>{ observationText = obsTextarea.value.trim(); finalizeAndSubmit(); };
+      questionDiv.appendChild(obsTitle); questionDiv.appendChild(obsTextarea); questionDiv.appendChild(submitBtn);
+      if(!wizardDiv.contains(pagerDiv)){ pagerDiv.innerHTML=''; pagerDiv.appendChild(prevQBtn); wizardDiv.appendChild(questionDiv); wizardDiv.appendChild(pagerDiv); }
+    } else { /* nothing */ }
+  }
+
+  async function finalizeAndSubmit(){
+    if(s.questions.length > 0 && answers.length < s.questions.length){ return alert('Responda todas as questões antes de enviar.'); }
+    const responseObj = { id: uid(), name: respondentName, date: new Date().toISOString(), answers: answers.slice(0,s.questions.length), observation: observationText || '' };
+    // Save response either to server or local
+    if(USE_SERVER){
+      try{
+        await saveResponseToServer(s.id, responseObj);
+        alert('Resposta enviada para o servidor.');
+      }catch(e){
+        console.error(e); alert('Falha ao salvar no servidor. A resposta será salva localmente.');
+        s.responses.push(responseObj); saveSurveysToLocal();
+      }
+    } else {
+      s.responses.push(responseObj); saveSurveysToLocal();
+    }
+    // thank you message
+    wizardDiv.innerHTML = `<h2>Obrigado, ${escapeHtml(respondentName)}!</h2><p style="margin-top:8px">${escapeHtml(s.message.replace(/\$nomeDoRespondente/g,respondentName))}</p><p class="small-txt" style="margin-top:10px">Sua resposta foi registrada em ${new Date(responseObj.date).toLocaleString()}.</p>`;
+    const backBtn = document.createElement('div'); backBtn.style.marginTop='12px';
+    const goHome = document.createElement('button'); goHome.className='btn btn-gray'; goHome.textContent='Voltar ao site';
+    goHome.onclick = ()=> { location.hash='#home'; handleRoute(); };
+    backBtn.appendChild(goHome); wizardDiv.appendChild(backBtn);
+  }
+
+  container.appendChild(wizardDiv);
+}
+
+/* -------------------------
+   Results view (mostly unchanged) but uses server if enabled
+   ------------------------- */
+function showResults(id){
+  const s = surveys.find(x=>x.id===id);
+  if(!s) return alert('Pesquisa não encontrada');
+  currentAnalysisSurveyId = id;
+  location.hash='#analysis';
+  handleRoute();
+  setTimeout(()=> renderAnalysisForSurvey(s), 260);
+}
+
+function renderAnalysisForSurvey(s){
+  const area = document.getElementById('resultsArea'); area.innerHTML='';
+  const header = document.createElement('div'); header.className='results-summary';
+  const title = document.createElement('div'); title.innerHTML = `<center><br><strong style="font-size:20px;">${escapeHtml(s.name)}</strong></center><br><div class="small-txt" style="margin-top:6px">Total de respostas: ${s.responses.length}</div>`;
+  const actions = document.getElementById('resultsActions'); actions.innerHTML='';
+
+  const exportBtn = document.createElement('button'); exportBtn.className='btn-icon'; exportBtn.innerHTML = '<span class="material-icons-outlined">download</span> Exportar CSV';
+  exportBtn.onclick = ()=>{
+    const rows = [];
+    const headerRow = ['Nome','Data','Observacao', ...s.questions.map((q,i)=>`Q${i+1}: ${q.text}`)];
+    rows.push(headerRow);
+    s.responses.forEach(r=>{ const row = [r.name, r.date, r.observation||'', ...r.answers]; rows.push(row); });
+    const csv = rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download = `${s.name.replace(/\s+/g,'_')}_results.csv`; document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const clearBtn = document.createElement('button'); clearBtn.className='btn-icon'; clearBtn.innerHTML = '<span class="material-icons-outlined">delete_forever</span> Limpar respostas';
+  clearBtn.onclick = async ()=>{
+    if(!confirm('Remover todas as respostas? Esta ação não pode ser desfeita.')) return;
+    if(USE_SERVER){
+      try{ s.responses = []; await saveSurveyToServer(s); renderAnalysisForSurvey(s); }catch(e){ alert('Falha ao limpar no servidor.'); console.error(e); }
+    } else { s.responses = []; saveSurveysToLocal(); renderAnalysisForSurvey(s); }
+  };
+
+  actions.appendChild(exportBtn); actions.appendChild(clearBtn);
+  header.appendChild(title); area.appendChild(header);
+
+  const sumResponses = document.getElementById('sumResponses');
+  const sumQuestions = document.getElementById('sumQuestions');
+  const sumLastDate = document.getElementById('sumLastDate');
+  sumResponses.textContent = s.responses.length;
+  sumQuestions.textContent = s.questions.length;
+  sumLastDate.textContent = s.responses.length ? new Date(Math.max(...s.responses.map(r=>new Date(r.date)))).toLocaleString() : '—';
+
+  s.questions.forEach((q,qi)=>{
+    const box = document.createElement('div'); box.style.marginTop='18px';
+    const qt = document.createElement('div'); qt.style.marginBottom='8px'; qt.innerHTML = `<strong>${escapeHtml(q.text)}</strong>`;
+    box.appendChild(qt);
+    const counts = {}; q.options.forEach(o=>counts[o]=0);
+    const respondersByOption = {}; q.options.forEach(o=>respondersByOption[o]=[]);
+    s.responses.forEach(r=>{ const ans = r.answers[qi]; if(ans){ counts[ans] = (counts[ans]||0) + 1; respondersByOption[ans].push({name: r.name, date: r.date}); } });
+    const tbl = document.createElement('table'); tbl.className='results-table';
+    const thead = document.createElement('thead'); const htr = document.createElement('tr');
+    ['Opção','Contagem','%','Quem respondeu (exemplo)'].forEach(t=>{ const th=document.createElement('th'); th.textContent=t; htr.appendChild(th); });
+    thead.appendChild(htr); tbl.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    const total = s.responses.length || 1;
+    Object.keys(counts).forEach(opt=>{
+      const tr = document.createElement('tr');
+      const tdOpt = document.createElement('td'); tdOpt.textContent = opt;
+      const tdCount = document.createElement('td'); tdCount.textContent = counts[opt];
+      const tdPct = document.createElement('td'); tdPct.textContent = `${Math.round((counts[opt]/total)*100)}%`;
+      const tdWho = document.createElement('td');
+      const whoFrag = document.createElement('div'); whoFrag.style.display='flex'; whoFrag.style.gap='6px'; whoFrag.style.flexWrap='wrap';
+      respondersByOption[opt].slice(0,5).forEach(resp=>{
+        const a = document.createElement('div'); a.style.display='flex'; a.style.alignItems='center'; a.style.gap='8px';
+        const av = document.createElement('div'); av.className='avatar'; av.textContent = (resp.name||'Usuário').split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+        const small = document.createElement('div'); small.style.fontSize='13px'; small.style.color='#374151'; small.textContent = resp.name;
+        a.appendChild(av); a.appendChild(small); a.title = `Respondido em ${new Date(resp.date).toLocaleString()}`; whoFrag.appendChild(a);
+      });
+      if(respondersByOption[opt].length>5){ const more = document.createElement('span'); more.className='small-txt'; more.textContent = `+${respondersByOption[opt].length-5} outros`; whoFrag.appendChild(more); }
+      tdWho.appendChild(whoFrag);
+      tr.appendChild(tdOpt); tr.appendChild(tdCount); tr.appendChild(tdPct); tr.appendChild(tdWho);
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody); box.appendChild(tbl); area.appendChild(box);
+  });
+
+  const detailsBox = document.createElement('div'); detailsBox.style.marginTop='18px';
+  detailsBox.innerHTML = '<h3>Respostas completas</h3>';
+  const table = document.createElement('table'); table.className='results-table';
+  const thRow = document.createElement('thead'); const trH = document.createElement('tr');
+  const headers = ['Nome','Data','Observação', ...s.questions.map((q,i)=>'Q'+(i+1))];
+  headers.forEach(hh => { const th = document.createElement('th'); th.textContent = hh; trH.appendChild(th); });
+  thRow.appendChild(trH); table.appendChild(thRow);
+  const tb = document.createElement('tbody');
+  s.responses.slice().reverse().forEach(r=>{ const tr = document.createElement('tr'); const tdName = document.createElement('td'); tdName.innerHTML = `<strong>${escapeHtml(r.name)}</strong>`; const tdDate = document.createElement('td'); tdDate.textContent = new Date(r.date).toLocaleString(); const tdObs = document.createElement('td'); tdObs.textContent = r.observation || '—'; tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdObs); s.questions.forEach((q,qi)=>{ const tdA = document.createElement('td'); tdA.textContent = r.answers[qi] || '—'; tr.appendChild(tdA); }); tb.appendChild(tr); });
+  table.appendChild(tb); detailsBox.appendChild(table); area.appendChild(detailsBox);
+  renderCommentsInsightsForSurvey(s);
+}
+
+/* -------------------------
+   Comments & Insights (unchanged)
+   ------------------------- */
+function renderCommentsInsightsForSurvey(s){
+  const container = document.getElementById('commentsInsights'); container.innerHTML = '';
+  const comments = s.responses.filter(r=>r.observation && r.observation.trim().length>0).map(r=>({ id: r.id, name: r.name, date: r.date, text: r.observation }));
+  const panel = document.createElement('div'); panel.className='comments-panel';
+  const listWrap = document.createElement('div'); listWrap.className='comments-list';
+  const tagWrap = document.createElement('div'); tagWrap.className='tag-cloud';
+  listWrap.innerHTML = `<h3>Comentários (${comments.length})</h3>`;
+  tagWrap.innerHTML = `<h4>Insights rápidos</h4><div id="tagCloudInner" style="margin-top:8px"></div><div id="insightSummary" style="margin-top:12px" class="small-txt"></div>`;
+  const perPage = 6; let page = 1;
+  function renderCommentsPage(){
+    const existingList = listWrap.querySelectorAll('.comment-item'); existingList.forEach(n => n.remove());
+    const start = (page-1)*perPage; const pageComments = comments.slice(start, start+perPage);
+    pageComments.forEach(c=>{
+      const item = document.createElement('div'); item.className='comment-item';
+      const meta = document.createElement('div'); meta.className='comment-meta';
+      const av = document.createElement('div'); av.className='avatar'; av.textContent = c.name.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+      const nameSpan = document.createElement('div'); nameSpan.style.fontWeight='600'; nameSpan.style.marginRight='8px'; nameSpan.textContent = c.name;
+      const dateSpan = document.createElement('div'); dateSpan.className='small-txt'; dateSpan.textContent = new Date(c.date).toLocaleString();
+      meta.appendChild(av); meta.appendChild(nameSpan); meta.appendChild(dateSpan);
+      const txt = document.createElement('div'); txt.style.marginTop='8px'; txt.textContent = c.text.length > 200 ? c.text.slice(0,200)+'...' : c.text;
+      const actions = document.createElement('div'); actions.style.marginTop='8px'; actions.style.display='flex'; actions.style.justifyContent='flex-end';
+      const viewBtn = document.createElement('button'); viewBtn.className='btn-icon'; viewBtn.textContent='Ver comentário';
+      viewBtn.onclick = ()=> openCommentModal(c);
+      actions.appendChild(viewBtn); item.appendChild(meta); item.appendChild(txt); item.appendChild(actions); listWrap.appendChild(item);
+    });
+    const existingPager = listWrap.querySelector('.pager'); if(existingPager) existingPager.remove();
+    if(comments.length > perPage){
+      const pager = document.createElement('div'); pager.className='pager';
+      const prev = document.createElement('button'); prev.className='btn btn-gray'; prev.textContent='Anterior';
+      const next = document.createElement('button'); next.className='btn btn-gray'; next.textContent='Próximo';
+      prev.onclick = ()=> { if(page>1){ page--; renderCommentsPage(); } };
+      next.onclick = ()=> { if(page*perPage < comments.length){ page++; renderCommentsPage(); } };
+      pager.appendChild(prev); pager.appendChild(next); listWrap.appendChild(pager);
+    }
+  }
+
+  function buildTagCloud(){
+    const textAll = comments.map(c=>c.text).join(' ').toLowerCase();
+    const tokens = textAll.replace(/[^\w\sà-úÀ-Ú-]/g,' ').split(/\s+/).filter(Boolean);
+    const stopwords = new Set(['a','o','e','de','da','do','que','é','em','para','com','por','um','uma','os','as','não','se','na','no','ao','meu','minha','seu','sua','mas','foi','faz','fazem','tem','temos','mais','muito','pouco','gostei','gostaria','sobre','isso']);
+    const freq = {}; tokens.forEach(t=>{ if(t.length<=2) return; if(stopwords.has(t)) return; freq[t] = (freq[t]||0) + 1; });
+    const entries = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,30);
+    const tagInner = document.getElementById('tagCloudInner'); if(!tagInner) return; tagInner.innerHTML = '';
+    if(entries.length===0){ tagInner.innerHTML = '<div class="small-txt">Nenhum comentário disponível para gerar insights.</div>'; document.getElementById('insightSummary').textContent = ''; return; }
+    const max = entries[0][1];
+    entries.forEach(([word,count])=>{
+      const tag = document.createElement('span'); tag.className='tag';
+      const size = 12 + Math.round((count / max) * 8); tag.style.fontSize = size + 'px'; tag.textContent = `${word} (${count})`;
+      tag.onclick = ()=> { document.getElementById('searchInput').value = word; applySearchForCurrentSurvey(); };
+      tagInner.appendChild(tag);
+    });
+    const top3 = entries.slice(0,3).map(e=>`${e[0]} (${e[1]})`).join(', ');
+    const avgLen = Math.round((comments.reduce((s,c)=>s + c.text.length,0) / comments.length) || 0);
+    document.getElementById('insightSummary').textContent = `Palavras mais frequentes: ${top3}. Comprimento médio dos comentários: ${avgLen} caracteres.`;
+  }
+
+  function openCommentModal(c){
+    const modal = document.getElementById('modalComment'); const content = document.getElementById('modalCommentContent');
+    content.innerHTML = `<h3>Comentário de ${escapeHtml(c.name)}</h3><div class="small-txt" style="margin-top:6px">${new Date(c.date).toLocaleString()}</div><p style="margin-top:12px">${escapeHtml(c.text)}</p><div style="display:flex;justify-content:flex-end;margin-top:12px"><button id="closeCmt" class="btn btn-gray">Fechar</button></div>`;
+    modal.style.display = 'flex'; document.getElementById('closeCmt').onclick = ()=> { modal.style.display='none'; };
+  }
+
+  panel.appendChild(listWrap); panel.appendChild(tagWrap); container.appendChild(panel); renderCommentsPage(); buildTagCloud();
+}
+
+/* -------------------------
+   Search (dashboard) - unchanged
+   ------------------------- */
+const searchInput = document.getElementById('searchInput');
+const filterBtn = document.getElementById('filterBtn');
+let searchTimeout = null;
+searchInput.addEventListener('input', ()=> { if(searchTimeout) clearTimeout(searchTimeout); searchTimeout = setTimeout(()=> { applySearchForCurrentSurvey(); }, 280); });
+filterBtn.addEventListener('click', ()=> applySearchForCurrentSurvey());
+
+function applySearchForCurrentSurvey(){
+  const q = (searchInput.value || '').toLowerCase().trim();
+  if(!currentAnalysisSurveyId){ alert('Abra uma pesquisa para aplicar a busca (clique em "Resultados" na pesquisa desejada).'); return; }
+  const s = surveys.find(x=>x.id===currentAnalysisSurveyId); if(!s) return;
+  if(!q){ renderAnalysisForSurvey(s); return; }
+  const filteredResponses = s.responses.filter(r=>{
+    if(r.name && r.name.toLowerCase().includes(q)) return true;
+    if(r.observation && r.observation.toLowerCase().includes(q)) return true;
+    if(r.answers && r.answers.some(a => (a||'').toLowerCase().includes(q))) return true;
+    if(s.questions.some(qt => qt.text.toLowerCase().includes(q))) return true;
+    return false;
+  });
+  const cloned = {...s, responses: filteredResponses};
+  renderFilteredResults(cloned);
+}
+
+function renderFilteredResults(s){
+  const area = document.getElementById('resultsArea'); area.innerHTML='';
+  const header = document.createElement('div'); header.className='results-summary';
+  const title = document.createElement('div'); title.innerHTML = `<strong style="font-size:18px">${escapeHtml(s.name)} (filtro aplicado)</strong><div class="small-txt" style="margin-top:6px">Respostas mostradas: ${s.responses.length}</div>`; header.appendChild(title); area.appendChild(header);
+  document.getElementById('sumResponses').textContent = s.responses.length;
+  document.getElementById('sumQuestions').textContent = s.questions.length;
+  document.getElementById('sumLastDate').textContent = s.responses.length ? new Date(Math.max(...s.responses.map(r=>new Date(r.date)))).toLocaleString() : '—';
+  s.questions.forEach((q,qi)=>{
+    const box = document.createElement('div'); box.style.marginTop='18px';
+    const qt = document.createElement('div'); qt.style.marginBottom='8px'; qt.innerHTML = `<strong>${escapeHtml(q.text)}</strong>`; box.appendChild(qt);
+    const counts = {}; q.options.forEach(o=>counts[o]=0);
+    s.responses.forEach(r=>{ const ans = r.answers[qi]; if(ans) counts[ans] = (counts[ans]||0) + 1; });
+    const tbl = document.createElement('table'); tbl.className='results-table';
+    const thead = document.createElement('thead'); const htr = document.createElement('tr');
+    ['Opção','Contagem','%'].forEach(t=>{ const th=document.createElement('th'); th.textContent=t; htr.appendChild(th); });
+    thead.appendChild(htr); tbl.appendChild(thead);
+    const tbody = document.createElement('tbody'); const total = s.responses.length || 1;
+    Object.keys(counts).forEach(opt=>{ const tr = document.createElement('tr'); const tdOpt = document.createElement('td'); tdOpt.textContent = opt; const tdCount = document.createElement('td'); tdCount.textContent = counts[opt]; const tdPct = document.createElement('td'); tdPct.textContent = `${Math.round((counts[opt]/total)*100)}%`; tr.appendChild(tdOpt); tr.appendChild(tdCount); tr.appendChild(tdPct); tbody.appendChild(tr); });
+    tbl.appendChild(tbody); box.appendChild(tbl); area.appendChild(box);
+  });
+
+  const detailsBox = document.createElement('div'); detailsBox.style.marginTop='18px'; detailsBox.innerHTML = '<h3>Respostas (filtradas)</h3>';
+  const table = document.createElement('table'); table.className='results-table';
+  const thRow = document.createElement('thead'); const trH = document.createElement('tr');
+  const headers = ['Nome','Data','Observação', ...s.questions.map((q,i)=>'Q'+(i+1))];
+  headers.forEach(hh => { const th = document.createElement('th'); th.textContent = hh; trH.appendChild(th); });
+  thRow.appendChild(trH); table.appendChild(thRow);
+  const tb = document.createElement('tbody');
+  s.responses.slice().reverse().forEach(r=>{ const tr = document.createElement('tr'); const tdName = document.createElement('td'); tdName.innerHTML = `<strong>${escapeHtml(r.name)}</strong>`; const tdDate = document.createElement('td'); tdDate.textContent = new Date(r.date).toLocaleString(); const tdObs = document.createElement('td'); tdObs.textContent = r.observation || '—'; tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdObs); s.questions.forEach((q,qi)=>{ const tdA = document.createElement('td'); tdA.textContent = r.answers[qi] || '—'; tr.appendChild(tdA); }); tb.appendChild(tr); });
+  table.appendChild(tb); detailsBox.appendChild(table); area.appendChild(detailsBox);
+
+  const comments = s.responses.filter(r=>r.observation && r.observation.trim().length>0).map(r=>({name:r.name,date:r.date,text:r.observation}));
+  const commentsContainer = document.getElementById('commentsInsights'); commentsContainer.innerHTML = '';
+  const wrap = document.createElement('div'); wrap.className='comments-panel';
+  const listWrap = document.createElement('div'); listWrap.className='comments-list';
+  const tagWrap = document.createElement('div'); tagWrap.className='tag-cloud';
+  listWrap.innerHTML = `<h3>Comentários (filtrados: ${comments.length})</h3>`;
+  tagWrap.innerHTML = `<h4>Insights rápidos</h4><div id="tagCloudInnerFiltered" style="margin-top:8px"></div><div id="insightSummaryFiltered" style="margin-top:12px" class="small-txt"></div>`;
+  wrap.appendChild(listWrap); wrap.appendChild(tagWrap); commentsContainer.appendChild(wrap);
+  comments.slice(0,8).forEach(c=>{
+    const item = document.createElement('div'); item.className='comment-item';
+    const meta = document.createElement('div'); meta.className='comment-meta';
+    const av = document.createElement('div'); av.className='avatar'; av.textContent = c.name.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+    const nameSpan = document.createElement('div'); nameSpan.style.fontWeight='600'; nameSpan.style.marginRight='8px'; nameSpan.textContent = c.name;
+    const dateSpan = document.createElement('div'); dateSpan.className='small-txt'; dateSpan.textContent = new Date(c.date).toLocaleString();
+    meta.appendChild(av); meta.appendChild(nameSpan); meta.appendChild(dateSpan);
+    const txt = document.createElement('div'); txt.style.marginTop='8px'; txt.textContent = c.text.length > 200 ? c.text.slice(0,200)+'...' : c.text;
+    item.appendChild(meta); item.appendChild(txt); listWrap.appendChild(item);
+  });
+
+  (function buildFilteredTagCloud(){
+    const textAll = comments.map(c=>c.text).join(' ').toLowerCase();
+    const tokens = textAll.replace(/[^\w\sà-úÀ-Ú-]/g,' ').split(/\s+/).filter(Boolean);
+    const stopwords = new Set(['a','o','e','de','da','do','que','é','em','para','com','por','um','uma','os','as','não','se','na','no','ao','meu','minha','seu','sua','mas','foi','faz','fazem','tem','temos','mais','muito','pouco','gostei','gostaria','sobre','isso']);
+    const freq = {}; tokens.forEach(t=>{ if(t.length<=2) return; if(stopwords.has(t)) return; freq[t] = (freq[t]||0) + 1; });
+    const entries = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,30);
+    const tagInner = document.getElementById('tagCloudInnerFiltered'); if(!tagInner) return; tagInner.innerHTML = '';
+    if(entries.length===0){ tagInner.innerHTML = '<div class="small-txt">Nenhum comentário disponível para gerar insights.</div>'; document.getElementById('insightSummaryFiltered').textContent = ''; return; }
+    const max = entries[0][1];
+    entries.forEach(([word,count])=>{
+      const tag = document.createElement('span'); tag.className='tag';
+      const size = 12 + Math.round((count / max) * 8); tag.style.fontSize = size + 'px'; tag.textContent = `${word} (${count})`;
+      tag.onclick = ()=> { document.getElementById('searchInput').value = word; applySearchForCurrentSurvey(); };
+      tagInner.appendChild(tag);
+    });
+    const top3 = entries.slice(0,3).map(e=>`${e[0]} (${e[1]})`).join(', ');
+    const avgLen = Math.round((comments.reduce((s,c)=>s + c.text.length,0) / comments.length) || 0);
+    document.getElementById('insightSummaryFiltered').textContent = `Palavras mais frequentes: ${top3}. Comprimento médio: ${avgLen} caracteres.`;
+  })();
+}
+
+/* -------------------------
+   Navigation wiring
+   ------------------------- */
+document.getElementById('navHome').onclick=()=>{ location.hash='#home'; handleRoute(); };
+document.getElementById('navCreate').onclick=()=>{ location.hash='#create'; handleRoute(); };
+document.getElementById('navAnalysis').onclick=()=>{ location.hash='#analysis'; handleRoute(); };
+
+renderSurveysList();
+
+</script>
+</body>
+</html>
